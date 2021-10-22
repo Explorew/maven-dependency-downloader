@@ -21,9 +21,9 @@ public class DependencyResolver {
             for (int i = 0; i < size; i++) {
                 Artifact curr = queue.poll();
                 if(downloaded.contains(curr)) continue;
-                downloaded.add(curr);
                 try{
                     download(curr);
+                    downloaded.add(curr);
                 }
                 catch (Exception e){
                     System.out.println("Error: failed to download " + curr.toString());
@@ -63,7 +63,7 @@ public class DependencyResolver {
 
     // The method is for downloading Artifact
     public static void download(Artifact artifact) throws IOException {
-        OutputStream outputStream = new FileOutputStream("./Downloaded/" + artifact + ".jar");
+        OutputStream outputStream = new FileOutputStream("./downloaded/" + artifact + ".jar");
         FileWriter fileWriter = new FileWriter();
         fileWriter.setOutputStream(outputStream);
         OkHttpClient client = new OkHttpClient();
