@@ -3,15 +3,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Plays the role of writing JAR files at the given directory.
+ */
 public class FileWriter implements AutoCloseable {
 
-    private static final int CHUNK_SIZE = 1024;
+    // OutputStream specifies the output file.
     private OutputStream outputStream;
+    private static final int CHUNK_SIZE = 1024;
 
-    public void setOutputStream(OutputStream outputStream) {
-        this.outputStream = outputStream;
-    }
-
+    // Write the InputStream as a file.
     public long write(InputStream inputStream, double length) throws IOException {
         if(outputStream == null) throw new Error("Error: Please specify output stream!");
         try (BufferedInputStream input = new BufferedInputStream(inputStream)) {
@@ -29,11 +30,16 @@ public class FileWriter implements AutoCloseable {
         }
     }
 
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
+    }
+
     public OutputStream getOutputStream() {
         return outputStream;
     }
 
     @Override
+    // Automatically close the outputStream after saving the JAR file.
     public void close() throws IOException {
         outputStream.close();
     }

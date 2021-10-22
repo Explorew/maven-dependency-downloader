@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The Artifact class represents the logical artifact coordinates of maven artifact.
+ *  It contains the coordinates (groupId, artifactId, and version) of an artifact.
+ */
 public class Artifact {
     private String groupId;
     private String artifactId;
@@ -46,6 +50,7 @@ public class Artifact {
     }
 
     @Override
+    // Note: The override equals method only checks if values of groupId and artifactId of two Artifacts are equal.
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
