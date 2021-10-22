@@ -45,7 +45,7 @@ public class DependencyResolver {
         }
     }
 
-    private static Artifact handleInput() throws Exception {
+    static Artifact handleInput() throws Exception {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.print("Please type groupId: ");
 //        String groupId = scanner.next();

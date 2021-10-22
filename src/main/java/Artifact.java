@@ -61,7 +61,7 @@ public class Artifact {
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupId, artifactId, version);
+        return Objects.hash(groupId, artifactId);
     }
 
     @Override

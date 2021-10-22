@@ -38,9 +38,10 @@ public class ArtifactTest {
     }
 
     @Test
+    // Note: Artifacts with same groupId and artifactId are considered as equal.
     public void testEquals3() {
         Artifact artifact = new Artifact("42", "42", "1.0.2");
-        Artifact artifact1 = new Artifact("42", "42", "1.0.2");
+        Artifact artifact1 = new Artifact("42", "42", "1.0.3");
 
         assertTrue(artifact.equals(artifact1));
         int expectedHashCodeResult = artifact.hashCode();
@@ -49,13 +50,13 @@ public class ArtifactTest {
 
     @Test
     public void testEquals4() {
-        Artifact artifact = new Artifact(null, "42", "1.0.2");
+        Artifact artifact = new Artifact("41", "42", "1.0.2");
         assertFalse(artifact.equals(new Artifact("42", "42", "1.0.2")));
     }
 
     @Test
     public void testEquals5() {
-        Artifact artifact = new Artifact("42", null, "1.0.2");
+        Artifact artifact = new Artifact("42", "41", "1.0.2");
         assertFalse(artifact.equals(new Artifact("42", "42", "1.0.2")));
     }
 }
