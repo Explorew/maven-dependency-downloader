@@ -11,21 +11,31 @@ import java.util.*;
  *
  */
 public class DependencyResolver {
-    private static String DOWNLOAD_PATH = "./temp";
 
-    public static void main(String[] args) throws Exception {
-        Artifact artifact = handleInputArtifact();
-        List<Artifact> res = resolveDependencies(artifact, null);
-        for (Artifact a: res
-             ) {
-            System.out.println(a);
-        }
-    }
+    private static String DOWNLOAD_PATH = System.getProperty("java.io.tmpdir");
+
+    // TODO: remove this main method => libraries do not have main methods.
+//    public static void main(String[] args) throws Exception {
+//
+//        // override default download path if provided as runtime argument
+//        if(args.length > 0)
+//            DOWNLOAD_PATH = args[0];
+//
+//        Artifact artifact = handleInputArtifact();
+//        List<Artifact> res = resolveDependencies(artifact, null);
+//        for (Artifact a: res
+//             ) {
+//            System.out.println(a);
+//        }
+//    }
 
     /**
      * The methods plays the roles of traversing the dependency graph of the given artifact
      *      and downloading the artifacts as jar files. It utilizes a BFS algorithm to traverse
      *      the dependency graph.
+     *
+     * @param path TODO add description
+     * @param target TODO add description
      * @return Returns a list of successfully downloaded artifacts.
      */
     public static List<Artifact> resolveDependencies(Artifact target, String path){
@@ -36,6 +46,8 @@ public class DependencyResolver {
         while(!queue.isEmpty()){
             int size = queue.size();
             for (int i = 0; i < size; i++) {
+
+                // TODO: outsource this to an extra method, to reduce complexity
                 Artifact curr = queue.poll();
                 if(downloaded.contains(curr)) continue;
                 try{
@@ -70,19 +82,9 @@ public class DependencyResolver {
      * @throws Exception Throw an except if the input is not valid.
      */
     static Artifact handleInputArtifact() throws Exception {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.print("Please type groupId: ");
-//        String groupId = scanner.next();
-//        System.out.print("Please type artifactId: ");
-//        String artifactId = scanner.next();
-//        System.out.print("Please type version: ");
-//        String version = scanner.next();
-//        System.out.print("Please type download directory (press Enter if you want to use default directory ./temp): ");
-//        String path = scanner.next();
-//        if(path.length() != 0) DOWNLOAD_PATH = path;
 
+        // TODO: place this in a unit test.
         //sample test case
-
         String groupId = "junit";
         String artifactId = "junit";
         String version = "4.13.2";
