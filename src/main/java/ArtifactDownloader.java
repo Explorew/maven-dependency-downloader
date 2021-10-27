@@ -9,6 +9,10 @@ public class ArtifactDownloader implements AutoCloseable {
     private final OkHttpClient client;
     private final FileWriter writer;
 
+    private final String ERROR_PREAMBLE = "Unable to resolve maven artifact: ";
+
+
+    // TODO: javadoc
     // Constructor of ArtifactDownloader taking an OkHttpClient and a FileWriter as parameters.
     public ArtifactDownloader(OkHttpClient client, FileWriter writer) {
         this.client = client;
@@ -29,13 +33,13 @@ public class ArtifactDownloader implements AutoCloseable {
             // If the HTTP request is not successful
             if (!response.isSuccessful()) {
                 if(response.code() == 404){
-                    throw new Error("Error: Page not found! Error code: " + response.code());
+                    throw new Error(ERROR_PREAMBLE+ "Page not found! Error code: " + response.code());
                 }
                 else if(response.code() == 404){
-                    throw new Error("Error: Bad request! Error code: " + response.code());
+                    throw new Error(ERROR_PREAMBLE+ "Bad request! Error code: " + response.code());
                 }
                 else{
-                    throw new Error("Error: Unknown error! Error code: " + response.code());
+                    throw new Error(ERROR_PREAMBLE+ "Unknown error! Error code: " + response.code());
                 }
             }
             // If the HTTP request is successful
@@ -48,9 +52,11 @@ public class ArtifactDownloader implements AutoCloseable {
                 return writer.write(responseBody.byteStream(), length);
             }
         } catch (Exception e) {
-            throw new Error("Error: Failed to establish connections!"); //TODO: To be moved into a helper class
+            throw new ArtifactResolveException(e.getMessage());
         }
     }
+
+    // TODO: write javadoc
 
     public OkHttpClient getClient() {
         return client;
