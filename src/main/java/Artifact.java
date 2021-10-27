@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * @author Alex
  * The Artifact class represents the logical artifact coordinates of maven artifact.
  *  It contains the coordinates (groupId, artifactId, and version) of an artifact.
  */

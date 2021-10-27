@@ -1,45 +1,38 @@
 /**
+ * @author Alex
  * Util class providing the common methods
  *  and URL/Path configurations for the project.
  */
 public class Util {
-    // It generates the path of POM file for a given Artifact
+    /**
+     * This method generates the path of POM file for a given Artifact.
+     * @param artifact The target artifact.
+     * @return A generated Pom file path.
+     */
     public static String createPomPath(Artifact artifact){
-        String res = artifact.getGroupId().replace('.', '/') + '/'
+        return artifact.getGroupId().replace('.', '/') + '/'
                 + artifact.getArtifactId() + '/'
                 + artifact.getVersion() + '/'
                 + artifact.getArtifactId() + '-' + artifact.getVersion() + ".pom";
-        return res;
     }
 
+    /**
+     * This method generates the reversed path of POM file for a given Artifact.
+     * @param artifact The target artifact.
+     * @return A generated Pom file path.
+     */
     public static String createReversedPomPath(Artifact artifact){
-        String res = artifact.getGroupId().replace('.', '/') + '/'
+        return artifact.getGroupId().replace('.', '/') + '/'
                 + artifact.getVersion() + '/'
                 + artifact.getArtifactId() + '/'
                 + artifact.getVersion() + '-' + artifact.getArtifactId() + ".pom";
-        return res;
     }
 
-    public static String namespace(){
-        return "http://maven.apache.org/POM/4.0.0";
-    }
-
-    public static String getPomURL(){
-        return "https://search.maven.org/remotecontent?filepath=";
-    }
-
-    public static String getJarURL(){
-        return "https://search.maven.org/remotecontent?filepath=";
-    }
-
-    public static String getSearchURL(){
-        return "https://search.maven.org/";
-    }
-
-    public static String getSearchPath(String childArtifactId, String childGroupId){
-        return "solrsearch/select?q=g:\"" + childGroupId + "\"+AND+a:\"" + childArtifactId + "\"&core=gav&rows=20&wt=pom";
-    }
-
+    /**
+     * This method generates the reversed path of JAr file for a given Artifact.
+     * @param artifact The target artifact.
+     * @return A generated Jar file path.
+     */
     public static String getJarPath(Artifact artifact){
         return artifact.getGroupId().replace(".", "/")
                 + "/" + artifact.getArtifactId() + "/"
@@ -48,4 +41,45 @@ public class Util {
                 + artifact.getVersion() + ".jar";
     }
 
+    /**
+     * This method generates the search path of a given artifactId and groupId.
+     * @param childArtifactId Target artifactId
+     * @param childGroupId Target groupId
+     * @return The Path of the search result (in Pom file) on maven library.
+     */
+    public static String getSearchPath(String childArtifactId, String childGroupId){
+        return "solrsearch/select?q=g:\"" + childGroupId + "\"+AND+a:\"" + childArtifactId + "\"&core=gav&rows=20&wt=pom";
+    }
+
+    /**
+     * Return the namespace of Maven Pom files.
+     * @return The namespace.
+     */
+    public static String namespace(){
+        return "http://maven.apache.org/POM/4.0.0";
+    }
+
+    /**
+     * Get the URL of Pom files on Maven central library.
+     * @return The URL of POM files.
+     */
+    public static String getPomURL(){
+        return "https://search.maven.org/remotecontent?filepath=";
+    }
+
+    /**
+     * Get the URL of Jar files on Maven central library.
+     * @return The URL of Jar files.
+     */
+    public static String getJarURL(){
+        return "https://search.maven.org/remotecontent?filepath=";
+    }
+
+    /**
+     * Get the URL for searching artifacts on Maven central library.
+     * @return The URL of searching artifacts.
+     */
+    public static String getSearchURL(){
+        return "https://search.maven.org/";
+    }
 }

@@ -1,9 +1,8 @@
 import okhttp3.*;
-import org.apache.maven.model.Repository;
-import java.io.IOException;
 import java.util.Objects;
 
 /**
+ * @author Alex
  * Plays the role of downloading JAR files by using a http based fetcher.
  */
 public class ArtifactDownloader implements AutoCloseable {
@@ -16,23 +15,27 @@ public class ArtifactDownloader implements AutoCloseable {
         this.writer = writer;
     }
 
-    // Performs the downloading responsibility. It requires the URL of a maven library
-    //  and the path of the target file as parameters.
-    public long download(String url, String path) throws IOException {
-        Request request = new Request.Builder().url(url).build();
+    /**
+     * Performs the downloading responsibility to fetch the jar file located on a given maven library.
+     * @param url The URL of a maven library.
+     * @param path The path of the target jar file in the maven library.
+     * @return Returns the length written on the disk.
+     */
+    public long download(String url, String path){
+        Request request = new Request.Builder().url(url + path).build();
         try{
             Call call = client.newCall(request);
             Response response = call.execute();
             // If the HTTP request is not successful
             if (!response.isSuccessful()) {
                 if(response.code() == 404){
-                    throw new Error("Error: Page not found! Error code: " + response.code()); //TODO: To be moved into a helper class
+                    throw new Error("Error: Page not found! Error code: " + response.code());
                 }
                 else if(response.code() == 404){
-                    throw new Error("Error: Bad request! Error code: " + response.code()); //TODO: To be moved into a helper class
+                    throw new Error("Error: Bad request! Error code: " + response.code());
                 }
                 else{
-                    throw new Error("Error: Unknown error! Error code: " + response.code()); //TODO: To be moved into a helper class
+                    throw new Error("Error: Unknown error! Error code: " + response.code());
                 }
             }
             // If the HTTP request is successful

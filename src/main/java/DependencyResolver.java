@@ -1,18 +1,35 @@
 import okhttp3.OkHttpClient;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 
 /**
- * The DependencyResolver class plays the role of traversing the dependency graph of the given artifact.
- *  It utilizes a BFS algorithm.
+ * @author Alex
+ *
+ * This plays the role of resolving the dependencies of an input artifact
+ *      and downloads them on a given directory.
+ *
  */
 public class DependencyResolver {
+    private static String DOWNLOAD_PATH = "./temp";
+
     public static void main(String[] args) throws Exception {
-        Artifact target = handleInput();
+        Artifact artifact = handleInputArtifact();
+        List<Artifact> res = resolveDependencies(artifact, null);
+        for (Artifact a: res
+             ) {
+            System.out.println(a);
+        }
+    }
+
+    /**
+     * The methods plays the roles of traversing the dependency graph of the given artifact
+     *      and downloading the artifacts as jar files. It utilizes a BFS algorithm to traverse
+     *      the dependency graph.
+     * @return Returns a list of successfully downloaded artifacts.
+     */
+    public static List<Artifact> resolveDependencies(Artifact target, String path){
+        if(path != null) DOWNLOAD_PATH = path;
         Set<Artifact> downloaded = new HashSet<>();
         Queue<Artifact> queue = new LinkedList<>();
         queue.add(target);
@@ -22,6 +39,7 @@ public class DependencyResolver {
                 Artifact curr = queue.poll();
                 if(downloaded.contains(curr)) continue;
                 try{
+                    // Download the visited artifact and add it in the set.
                     download(curr);
                     downloaded.add(curr);
                 }
@@ -29,6 +47,7 @@ public class DependencyResolver {
                     System.out.println("Error: failed to download " + curr.toString());
                 }
                 try{
+                    // Fetch dependencies list of curr artifact and add them in the help queue.
                     List<Artifact> dependencies = DependencyParser.fetchDependencies(curr);
                     curr.setDependencies(dependencies);
                     queue.addAll(dependencies);
@@ -36,16 +55,21 @@ public class DependencyResolver {
                 catch(Error error){
                     System.out.println(error);
                 }
-
             }
         }
         System.out.println("Successfully downloaded: ");
         for (Artifact artifact: downloaded) {
             System.out.println("\t" + artifact.getArtifactId() + " " + artifact.getVersion() + " " + artifact.getGroupId());
         }
+        return new ArrayList<>(downloaded);
     }
 
-    static Artifact handleInput() throws Exception {
+    /**
+     * This method requires the user enter the coordinate of an artifact as well as the directory of output jar files.
+     * @return An Artifact object created by the given artifact coordinate.
+     * @throws Exception Throw an except if the input is not valid.
+     */
+    static Artifact handleInputArtifact() throws Exception {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.print("Please type groupId: ");
 //        String groupId = scanner.next();
@@ -53,17 +77,35 @@ public class DependencyResolver {
 //        String artifactId = scanner.next();
 //        System.out.print("Please type version: ");
 //        String version = scanner.next();
+//        System.out.print("Please type download directory (press Enter if you want to use default directory ./temp): ");
+//        String path = scanner.next();
+//        if(path.length() != 0) DOWNLOAD_PATH = path;
+
         //sample test case
-        String groupId = "com.jolira";
-        String artifactId = "guice";
-        String version = "3.0.0";
-        if(groupId.length() == 0 || artifactId.length() == 0 || version.length() == 0) throw new Exception("Error: Input artifact is not valid");
+
+        String groupId = "junit";
+        String artifactId = "junit";
+        String version = "4.13.2";
+        DOWNLOAD_PATH = "./temp";
+
+        // Check if the directory exists.
+        File directory = new File(DOWNLOAD_PATH);
+        if (!directory.exists()){
+            directory.mkdirs();
+        }
+        if(groupId.length() == 0 || artifactId.length() == 0 || version.length() == 0){
+            throw new Exception("Error: Input artifact is not valid");
+        }
         return new Artifact(groupId, artifactId, version);
     }
 
-    // The method is for downloading Artifact
+    /**
+     * The method plays the role of downloading Artifact.
+     * @param artifact The maven artifact to be downloaded.
+     * @throws IOException Throw an except if it fails to write the file or it fails to fetch the Jar file online.
+     */
     public static void download(Artifact artifact) throws IOException {
-        OutputStream outputStream = new FileOutputStream("./downloaded/" + artifact + ".jar");
+        OutputStream outputStream = new FileOutputStream(DOWNLOAD_PATH + '/' + artifact + ".jar");
         FileWriter fileWriter = new FileWriter();
         fileWriter.setOutputStream(outputStream);
         OkHttpClient client = new OkHttpClient();

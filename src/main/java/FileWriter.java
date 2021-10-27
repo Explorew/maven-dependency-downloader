@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * @author Alex
  * Plays the role of writing JAR files at the given directory.
  */
 public class FileWriter implements AutoCloseable {
@@ -12,8 +13,13 @@ public class FileWriter implements AutoCloseable {
     private OutputStream outputStream;
     private static final int CHUNK_SIZE = 1024;
 
-    // Write the InputStream as a file.
-    public long write(InputStream inputStream, double length) throws IOException {
+    /**
+     * Write the InputStream as a file.
+     * @param inputStream The Jar file to be written on the disk.
+     * @param length The length of the file.
+     * @return return total bytes that has been written.
+     */
+    public long write(InputStream inputStream, double length){
         if(outputStream == null) throw new Error("Error: Please specify output stream!");
         try (BufferedInputStream input = new BufferedInputStream(inputStream)) {
             byte[] dataBuffer = new byte[CHUNK_SIZE];
@@ -30,6 +36,7 @@ public class FileWriter implements AutoCloseable {
         }
     }
 
+    // Getter and setter.
     public void setOutputStream(OutputStream outputStream) {
         this.outputStream = outputStream;
     }

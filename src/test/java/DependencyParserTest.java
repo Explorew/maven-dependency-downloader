@@ -1,12 +1,40 @@
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.jdom2.CDATA;
 import org.jdom2.Comment;
 import org.jdom2.Element;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 public class DependencyParserTest {
+    @Test
+    public void testFetchVersion() {
+        assertNull(DependencyParser.fetchVersion(new Element("name")));
+    }
+
+    @Test
+    public void testFetchVersion2() {
+        Element element = new Element("Name");
+        element.addContent(new CDATA("String"));
+        assertNull(DependencyParser.fetchVersion(element));
+    }
+
+    @Test
+    public void testSearchOnlineVersion() {
+        assertNull(DependencyParser.searchOnlineVersion("Name", "Name"));
+    }
+
+    @Test
+    public void testSearchOnlineVersion2() {
+        assertEquals(DependencyParser.searchOnlineVersion("org.codehaus.mojo", "animal-sniffer-parent"), "1.20");
+    }
+
+    @Test
+    public void testFetchVersion3() {
+        Element element = new Element("Name");
+        element.addContent(new Element("Name"));
+        assertNull(DependencyParser.fetchVersion(element));
+    }
+
     @Test
     public void testCheckArtifactId() {
         assertFalse(DependencyParser.checkArtifactId("42"));
@@ -79,10 +107,7 @@ public class DependencyParserTest {
         assertFalse(DependencyParser.checkVersion(element));
     }
 
-    @Test
-    public void testFetchDependencies() {
-//        assertTrue(DependencyParser.fetchDependencies("foo", new Artifact("42", "42", "1.0.2")).isEmpty());
-//        assertTrue(DependencyParser.fetchDependencies("${pom.groupId}", new Artifact("42", "42", "1.0.2")).isEmpty());
-    }
+
+
 }
 
