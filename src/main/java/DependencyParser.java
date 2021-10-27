@@ -66,7 +66,9 @@ public class DependencyParser {
         }
     }
 
-    //
+    // HELPER METHODS:
+
+    // This is a helper function to parse the version of a dependency in the Pom file
     private static String parseDependencyVersion(String childGroupId, String childArtifactId, Element version, Element rootNode, Namespace ns, Artifact artifact) {
         String childVersion;
         // If version is not specified in the POM file, search on maven library.
@@ -98,7 +100,6 @@ public class DependencyParser {
         return childVersion;
     }
 
-    // HELPER METHODS:
     // It returns a Document object fetched by SAXBuilder.
     private static Document parseDoc(String REMOTE_URL, Artifact artifact){
         try{
