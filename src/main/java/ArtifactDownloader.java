@@ -2,18 +2,20 @@ import okhttp3.*;
 import java.util.Objects;
 
 /**
- * @author Alex
+ * @author Yizhong Ding
  * Plays the role of downloading JAR files by using a http based fetcher.
  */
 public class ArtifactDownloader implements AutoCloseable {
     private final OkHttpClient client;
     private final FileWriter writer;
-
     private final String ERROR_PREAMBLE = "Unable to resolve maven artifact: ";
 
 
-    // TODO: javadoc
-    // Constructor of ArtifactDownloader taking an OkHttpClient and a FileWriter as parameters.
+    /**
+     * Constructor of ArtifactDownloader taking an OkHttpClient and a FileWriter as parameters.
+     * @param client input client
+     * @param writer input writer
+     */
     public ArtifactDownloader(OkHttpClient client, FileWriter writer) {
         this.client = client;
         this.writer = writer;
@@ -33,20 +35,20 @@ public class ArtifactDownloader implements AutoCloseable {
             // If the HTTP request is not successful
             if (!response.isSuccessful()) {
                 if(response.code() == 404){
-                    throw new Error(ERROR_PREAMBLE+ "Page not found! Error code: " + response.code());
+                    throw new ArtifactResolveException(ERROR_PREAMBLE+ "Page not found! Error code: " + response.code());
                 }
                 else if(response.code() == 404){
-                    throw new Error(ERROR_PREAMBLE+ "Bad request! Error code: " + response.code());
+                    throw new ArtifactResolveException(ERROR_PREAMBLE+ "Bad request! Error code: " + response.code());
                 }
                 else{
-                    throw new Error(ERROR_PREAMBLE+ "Unknown error! Error code: " + response.code());
+                    throw new ArtifactResolveException(ERROR_PREAMBLE+ "Unknown error! Error code: " + response.code());
                 }
             }
             // If the HTTP request is successful
             else{
                 ResponseBody responseBody = response.body();
                 if (responseBody == null) {
-                    throw new IllegalStateException("Error: Response doesn't contain a file!");
+                    throw new ArtifactResolveException(ERROR_PREAMBLE + "Response doesn't contain a file!");
                 }
                 double length = Double.parseDouble(Objects.requireNonNull(response.header("Content-Length", "1")));
                 return writer.write(responseBody.byteStream(), length);
@@ -56,18 +58,26 @@ public class ArtifactDownloader implements AutoCloseable {
         }
     }
 
-    // TODO: write javadoc
-
+    /**
+     * Getter for OkHttpClient
+     * @return returns the OkHttpClient instance
+     */
     public OkHttpClient getClient() {
         return client;
     }
 
+    /**
+     * Getter for FileWriter
+     * @return returns the FileWriter instance
+     */
     public FileWriter getWriter() {
         return writer;
     }
 
     @Override
-    // Automatically close the writer at the end of the life cycle of this class.
+    /**
+     * Automatically close the writer at the end of the life cycle of this class.
+     */
     public void close() throws Exception {
         writer.close();
     }

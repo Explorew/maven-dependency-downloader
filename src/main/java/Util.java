@@ -1,5 +1,5 @@
 /**
- * @author Alex
+ * @author Yizhong Ding
  * Util class providing the common methods
  *  and URL/Path configurations for the project.
  */

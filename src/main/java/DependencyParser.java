@@ -11,16 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Alex //TODO your actual name here
- *
+ * @author Yizhong Ding
  * Plays the role of parsing a list of (direct) dependency of a given Artifact. It uses HTTP based fetcher
  * to retrieve a POM file and return the Dependencies lists on the POM file.
  */
 public class DependencyParser {
 
     /**
-     * This Method TODO: explain yourself here.
-     *
+     * This Method fetches the dependency list by parsing the POM file.
      * @param artifact The target artifact to get dependencies.
      * @return Returns a list of artifact dependencies.
      */
@@ -53,13 +51,12 @@ public class DependencyParser {
     }
 
     /**
-     * Return a list of dependency parsed from the given POM element.
-     *
-     * @param result
-     * @param dependencies
-     * @param ns
-     * @param rootNode
-     * @param artifact
+     * Returns a list of dependency parsed from the given POM element.
+     * @param result result dependency list
+     * @param dependencies dependencies element of the Pom file
+     * @param ns name space of the Pom file
+     * @param rootNode rootNode of the Pom file
+     * @param artifact target Artifact object
      */
     private static void getDependencyList(List<Artifact> result, Element dependencies, Namespace ns, Element rootNode, Artifact artifact) {
         for (Element target : dependencies.getChildren("dependency", ns)) {
@@ -83,14 +80,13 @@ public class DependencyParser {
 
     /**
      * This is a helper function to parse the version of a dependency in the Pom file
-     *
-     * @param childGroupId
-     * @param childArtifactId
-     * @param version
-     * @param rootNode
-     * @param ns
-     * @param artifact
-     * @return
+     * @param childGroupId group id of a dependency
+     * @param childArtifactId artifact id of a dependency
+     * @param version version of a dependency
+     * @param ns name space of the Pom file
+     * @param rootNode rootNode of the Pom file
+     * @param artifact target Artifact object
+     * @return returns the version of a given dependency. returns null if it does not exists.
      */
     private static String parseDependencyVersion(String childGroupId, String childArtifactId, Element version, Element rootNode, Namespace ns, Artifact artifact) {
         String childVersion;
@@ -116,7 +112,7 @@ public class DependencyParser {
             // Eg: https://search.maven.org/classic/remotecontent?filepath=net/bytebuddy/byte-buddy-agent/1.11.21/byte-buddy-agent-1.11.21.pom
             if (childVersion == null) childVersion = searchOnlineVersion(childGroupId, childArtifactId);
         }
-        // Normal version format. //TODO: explain what normal version format is.
+        // Normal version format. Eg: version is well defined in <dependency> element
         else {
             childVersion = version.getValue();
         }
@@ -125,10 +121,9 @@ public class DependencyParser {
 
     /**
      * It returns a Document object fetched by SAXBuilder.
-     *
-     * @param REMOTE_URL
-     * @param artifact
-     * @return
+     * @param REMOTE_URL the URL for the Pom file
+     * @param artifact the target artifact object
+     * @return returns a fetched Pom file. returns null if it does not exists.
      */
     private static Document parseDoc(String REMOTE_URL, Artifact artifact) {
         try {
@@ -142,10 +137,9 @@ public class DependencyParser {
 
     /**
      * It returns a Document object fetched by SAXBuilder. The URL is constructed in a reversed order.
-     *
-     * @param REMOTE_URL
-     * @param artifact
-     * @return
+     * @param REMOTE_URL the URL for the Pom file
+     * @param artifact the target artifact object
+     * @return returns a fetched Pom file. returns null if it does not exists.
      */
     private static Document parseDocReversely(String REMOTE_URL, Artifact artifact) {
         try {
@@ -158,16 +152,14 @@ public class DependencyParser {
     }
 
     /**
-     * TODO javadoc here...
-     *
-     * @param rootNode
-     * @param childVersion
-     * @param ns
-     * @return
+     * It searches version of a dependency which is specified as a variable
+     *  such as <version>${junit.version}</version>.
+     *  Example can be found: https://repo1.maven.org/maven2/cn/leancloud/okhttp-parent/2.6.0/okhttp-parent-2.6.0.pom.
+     * @param rootNode rootNode of the Pom file
+     * @param childVersion version value in the Pom file
+     * @param ns name space of the Pom file
+     * @return returns version string inside Property element of the Pom file. returns null if it does not exists.
      */
-    //  It searches version of a dependency which is specified as a variable
-    //      <version>${junit.version}</version>
-    //      Eg: https://repo1.maven.org/maven2/cn/leancloud/okhttp-parent/2.6.0/okhttp-parent-2.6.0.pom
     private static String searchPropertyVersion(Element rootNode, String childVersion, Namespace ns) {
         Element temp = rootNode.getChild("properties", ns);
         String version = childVersion.substring(childVersion.indexOf("{") + 1, childVersion.indexOf("}"));
@@ -179,15 +171,12 @@ public class DependencyParser {
     }
 
     /**
-     * TODO javadoc here...
-     *
-     * @param rootNode
-     * @param childVersion
-     * @param ns
-     * @return
+     * If the dependency version is not specified int the POM file,
+     *  the program will search the coordinate on Maven central library to fetch the first available version.
+     * @param childGroupId target group id of a dependency
+     * @param childArtifactId target artifact id of a dependency
+     * @return returns first available version on Maven Central Library. returns null if it does not exists.
      */
-    // If the dependency version is not specified int the POM file,
-    //      it will search the coordinate on Maven central library to fetch the first available version.
     static String searchOnlineVersion(String childGroupId, String childArtifactId) {
         try {
             SAXBuilder sax = new SAXBuilder();
@@ -208,10 +197,9 @@ public class DependencyParser {
     }
 
     /**
-     * Find the first version in <str name='v'> element
-     *
-     * @param responses
-     * @return
+     * Fetch available version by finding the first version in "str name='v'" element
+     * @param responses response of the Http request that is in the format of a Pom file
+     * @return returns the available version string. returns null if it does not exists.
      */
     public static String fetchVersion(Element responses) {
         String childVersion = null;
@@ -231,9 +219,8 @@ public class DependencyParser {
 
     /**
      * Helper methods for checking if ArtifactId is a variable
-     *
-     * @param childArtifactId
-     * @return
+     * @param childArtifactId target artifact id
+     * @return a boolean value indicating if the input is valid
      */
     public static boolean checkArtifactId(String childArtifactId) {
         return childArtifactId.equals("${pom.artifactId}")
@@ -243,7 +230,9 @@ public class DependencyParser {
     }
 
     /**
-     * @param childGroupId
+     * Helper methods for checking if GroupId is a variable
+     * @param childGroupId target group id
+     * @return a boolean value indicating if the input is valid
      */
     public static boolean checkGroupId(String childGroupId) {
         return childGroupId.equals("${pom.groupId}")
@@ -253,7 +242,9 @@ public class DependencyParser {
     }
 
     /**
-     * @param version
+     * Helper methods for checking if Version string is a variable
+     * @param version target version
+     * @return a boolean value indicating if the input is valid
      */
     public static boolean checkVersion(Element version) {
         return version.getValue().equals("${pom.version}")

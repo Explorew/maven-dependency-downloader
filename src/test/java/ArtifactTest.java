@@ -9,6 +9,9 @@ import org.junit.Test;
 
 public class ArtifactTest {
     @Test
+    /**
+     * Test for the constructor of Artifact
+     */
     public void testConstructor() {
         Artifact actualArtifact = new Artifact("42", "42", "1.0.2");
         actualArtifact.setArtifactId("42");
@@ -24,12 +27,18 @@ public class ArtifactTest {
     }
 
     @Test
+    /**
+     * Test for override equals method
+     */
     public void testEquals() {
         assertFalse((new Artifact("42", "42", "1.0.2")).equals(null));
         assertFalse((new Artifact("42", "42", "1.0.2")).equals("Different type to Artifact"));
     }
 
     @Test
+    /**
+     * Test for override equals method
+     */
     public void testEquals2() {
         Artifact artifact = new Artifact("42", "42", "1.0.2");
         assertTrue(artifact.equals(artifact));
@@ -38,7 +47,10 @@ public class ArtifactTest {
     }
 
     @Test
-    // Note: Artifacts with same groupId and artifactId are considered as equal.
+    /**
+     * Test for override equals method
+     *  Note: Artifacts with same groupId and artifactId are considered as equal.
+     */
     public void testEquals3() {
         Artifact artifact = new Artifact("42", "42", "1.0.2");
         Artifact artifact1 = new Artifact("42", "42", "1.0.3");
@@ -49,15 +61,13 @@ public class ArtifactTest {
     }
 
     @Test
+    /**
+     * Test for override equals method
+     */
     public void testEquals4() {
         Artifact artifact = new Artifact("41", "42", "1.0.2");
         assertFalse(artifact.equals(new Artifact("42", "42", "1.0.2")));
     }
 
-    @Test
-    public void testEquals5() {
-        Artifact artifact = new Artifact("42", "41", "1.0.2");
-        assertFalse(artifact.equals(new Artifact("42", "42", "1.0.2")));
-    }
 }
 

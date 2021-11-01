@@ -1,8 +1,8 @@
 public class ArtifactResolveException extends RuntimeException {
-
     /**
-     * custom exception that can be thrown if anything goes wrong during artifact resolving.
-     * @param cause reason for excpetion
+     * @author Yizhong Ding
+     * Custom exception that can be thrown if anything goes wrong during artifact resolving.
+     * @param cause reason for exception
      */
     public ArtifactResolveException(String cause)
     {

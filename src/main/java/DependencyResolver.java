@@ -4,38 +4,35 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @author Alex
- *
+ * @author Yizhong Ding
  * This plays the role of resolving the dependencies of an input artifact
  *      and downloads them on a given directory.
- *
  */
 public class DependencyResolver {
 
     private static String DOWNLOAD_PATH = System.getProperty("java.io.tmpdir");
 
     // TODO: remove this main method => libraries do not have main methods.
-//    public static void main(String[] args) throws Exception {
-//
-//        // override default download path if provided as runtime argument
-//        if(args.length > 0)
-//            DOWNLOAD_PATH = args[0];
-//
-//        Artifact artifact = handleInputArtifact();
-//        List<Artifact> res = resolveDependencies(artifact, null);
-//        for (Artifact a: res
-//             ) {
-//            System.out.println(a);
-//        }
-//    }
+    public static void main(String[] args) throws Exception {
+
+        // override default download path if provided as runtime argument
+        if(args.length > 0)
+            DOWNLOAD_PATH = args[0];
+
+        Artifact artifact = handleInputArtifact();
+        List<Artifact> res = resolveDependencies(artifact, null);
+        for (Artifact a: res
+             ) {
+            System.out.println(a);
+        }
+    }
 
     /**
      * The methods plays the roles of traversing the dependency graph of the given artifact
      *      and downloading the artifacts as jar files. It utilizes a BFS algorithm to traverse
      *      the dependency graph.
-     *
-     * @param path TODO add description
-     * @param target TODO add description
+     * @param path the path of Jar files
+     * @param target the target Artifact
      * @return Returns a list of successfully downloaded artifacts.
      */
     public static List<Artifact> resolveDependencies(Artifact target, String path){
@@ -46,27 +43,7 @@ public class DependencyResolver {
         while(!queue.isEmpty()){
             int size = queue.size();
             for (int i = 0; i < size; i++) {
-
-                // TODO: outsource this to an extra method, to reduce complexity
-                Artifact curr = queue.poll();
-                if(downloaded.contains(curr)) continue;
-                try{
-                    // Download the visited artifact and add it in the set.
-                    download(curr);
-                    downloaded.add(curr);
-                }
-                catch (Exception e){
-                    System.out.println("Error: failed to download " + curr.toString());
-                }
-                try{
-                    // Fetch dependencies list of curr artifact and add them in the help queue.
-                    List<Artifact> dependencies = DependencyParser.fetchDependencies(curr);
-                    curr.setDependencies(dependencies);
-                    queue.addAll(dependencies);
-                }
-                catch(Error error){
-                    System.out.println(error);
-                }
+                traverseDependencyNode(downloaded, queue);
             }
         }
         System.out.println("Successfully downloaded: ");
@@ -74,6 +51,33 @@ public class DependencyResolver {
             System.out.println("\t" + artifact.getArtifactId() + " " + artifact.getVersion() + " " + artifact.getGroupId());
         }
         return new ArrayList<>(downloaded);
+    }
+
+    /**
+     * Helper method that visits dependency Graph nodes.
+     * @param downloaded a set of successfully downloaded Artifacts
+     * @param queue queue used for BFS traverse the dependency graph
+     */
+    public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue) {
+        Artifact curr = queue.poll();
+        if(downloaded.contains(curr)) return;
+        try{
+            // Download the visited artifact and add it in the set.
+            download(curr);
+            downloaded.add(curr);
+        }
+        catch (Exception e){
+            System.out.println("Error: failed to download " + curr.toString());
+        }
+        try{
+            // Fetch dependencies list of curr artifact and add them in the help queue.
+            List<Artifact> dependencies = DependencyParser.fetchDependencies(curr);
+            curr.setDependencies(dependencies);
+            queue.addAll(dependencies);
+        }
+        catch(Error error){
+            System.out.println(error);
+        }
     }
 
     /**

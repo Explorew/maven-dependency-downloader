@@ -12,7 +12,7 @@ public class FileWriterTest {
     @Test
     public void testWrite() throws IOException {
         FileWriter fileWriter = new FileWriter();
-        assertThrows(Error.class,
+        assertThrows(ArtifactResolveException.class,
                 () -> fileWriter.write(new ByteArrayInputStream("AAAAAAAAAAAAAAAAAAAAAAAA".getBytes("UTF-8")), 10.0));
     }
 

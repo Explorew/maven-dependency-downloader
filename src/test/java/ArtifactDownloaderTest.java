@@ -8,6 +8,9 @@ import org.junit.Test;
 
 public class ArtifactDownloaderTest {
     @Test
+    /**
+     * Test for the constructor of ArtifactDownloader
+     */
     public void testConstructor() {
         OkHttpClient okHttpClient = new OkHttpClient();
         FileWriter fileWriter = new FileWriter();
@@ -18,29 +21,41 @@ public class ArtifactDownloaderTest {
     }
 
     @Test
+    /**
+     * Test for invalid URL download
+     */
     public void testDownload() throws IOException {
         OkHttpClient client = new OkHttpClient();
-        assertThrows(Error.class,
+        assertThrows(ArtifactResolveException.class,
                 () -> (new ArtifactDownloader(client, new FileWriter())).download("https://example.org/example", "Path"));
     }
 
     @Test
+    /**
+     * Test for invalid URL download
+     */
     public void testDownload2() throws IOException {
         OkHttpClient client = new OkHttpClient(new OkHttpClient.Builder());
-        assertThrows(Error.class,
+        assertThrows(ArtifactResolveException.class,
                 () -> (new ArtifactDownloader(client, new FileWriter())).download("https://example.org/example", "Path"));
     }
 
     @Test
+    /**
+     * Test for invalid URL download
+     */
     public void testDownload3() throws IOException {
-        assertThrows(Error.class,
+        assertThrows(ArtifactResolveException.class,
                 () -> (new ArtifactDownloader(null, new FileWriter())).download("https://example.org/example", "Path"));
     }
 
     @Test
+    /**
+     * Test for invalid URL download
+     */
     public void testDownload4() throws IOException {
         OkHttpClient client = new OkHttpClient();
-        assertThrows(Error.class,
+        assertThrows(ArtifactResolveException.class,
                 () -> (new ArtifactDownloader(client, new FileWriter())).download("https://example.org/example", "42"));
     }
 }
