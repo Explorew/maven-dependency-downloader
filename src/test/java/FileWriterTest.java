@@ -10,6 +10,9 @@ import org.junit.Test;
 
 public class FileWriterTest {
     @Test
+    /**
+     * Test for write method
+     */
     public void testWrite() throws IOException {
         FileWriter fileWriter = new FileWriter();
         assertThrows(ArtifactResolveException.class,
@@ -17,6 +20,9 @@ public class FileWriterTest {
     }
 
     @Test
+    /**
+     * Test for auto close method
+     */
     public void testClose() throws IOException {
         FileWriter fileWriter = new FileWriter();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1);
@@ -27,6 +33,9 @@ public class FileWriterTest {
 
 
     @Test
+    /**
+     * Test for FileWriter's constructor
+     */
     public void testConstructor() {
         FileWriter actualFileWriter = new FileWriter();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1);
