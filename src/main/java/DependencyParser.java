@@ -141,6 +141,7 @@ public class DependencyParser {
      * @param artifact the target artifact object
      * @return returns a fetched Pom file. returns null if it does not exists.
      */
+    // TODO: write a unit test for tis one ore remove it (if not needed)
     private static Document parseDocReversely(String REMOTE_URL, Artifact artifact) {
         try {
             SAXBuilder sax = new SAXBuilder();

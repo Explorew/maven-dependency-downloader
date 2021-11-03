@@ -19,7 +19,7 @@ public class FileWriter implements AutoCloseable {
      * @param length The length of the file.
      * @return return total bytes that has been written.
      */
-    public long write(InputStream inputStream, double length){
+    public long write(InputStream inputStream, double length) throws ArtifactResolveException {
         if(outputStream == null) throw new ArtifactResolveException("Error: Please specify output stream!");
         try (BufferedInputStream input = new BufferedInputStream(inputStream)) {
             byte[] dataBuffer = new byte[CHUNK_SIZE];
@@ -30,8 +30,7 @@ public class FileWriter implements AutoCloseable {
                 outputStream.write(dataBuffer, 0, readBytes);
             }
             return totalBytes;
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
             throw new ArtifactResolveException("Error: Failed to write files!");
         }
     }

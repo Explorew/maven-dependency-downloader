@@ -56,23 +56,6 @@
                 <version>2.22.2</version>
             </plugin>
 
-            <!-- specify main class for exec goal -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>${launcher.class}</mainClass>
-                </configuration>
-            </plugin>
-
             <!-- build into self contained jar (including all dependencies) -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -81,11 +64,6 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>${launcher.class}</mainClass>
-                        </manifest>
-                    </archive>
                 </configuration>
                 <executions>
                     <execution>

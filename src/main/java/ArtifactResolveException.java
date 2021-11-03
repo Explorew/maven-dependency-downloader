@@ -1,4 +1,4 @@
-public class ArtifactResolveException extends RuntimeException {
+public class ArtifactResolveException extends Exception {
     /**
      * @author Yizhong Ding
      * Custom exception that can be thrown if anything goes wrong during artifact resolving.
