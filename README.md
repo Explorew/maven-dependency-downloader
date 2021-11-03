@@ -12,31 +12,41 @@ Prerequisite
 Make sure Java (version 8 and higher) is installed on your machine.
 
 
-Quick Start 
+Build Instructions 
 ----- 
 Move to the project directory.
  
-Run the java codes from terminal by typing:
-    
-
-      $ mvn exec:java
-
-
-Also, you can build a self-contained jar:
+Build a self-contained jar for this library:
 
       $ mvn clean package
 
-Then you can use the following command to run the jar file:
+Usage
+-----
 
-      $ java -jar target/MavenDependencyDownloader.jar
+ * [Build this library](#quick-start) 
+ * Add the library to your classpath
+ * Call this library from your program:  
+ 
+```java
+// Artifact for which we want to collect all dependencies:
+String artifactId = "asyncrestlib";
+String groupId = "eu.kartoffelquadrat";
+String version = "1.5.2";
+
+// Where to store the dependencies (as JARs)
+// tmpdir will be used if null or empty
+String targetLocation = "/Users/schieder/Desktop/myDependencies";
+
+// Call library to collect all dependencies
+DependencyResolver.resolveArtifact()
+```
 
 
-This tool can also be used in your own project. 
-This can be done by calling the static method resolveDependencies
-in DependencyResolver class. The method takes a target artifact 
-as an input and return a list of dependency artifacts.
 
 Documentation 
 ----- 
 
-[Read the Java Doc](https://explorew.github.io/maven-dependency-downloader/)
+ * [Please consult the JavaDoc for method details.](https://explorew.github.io/maven-dependency-downloader/)
+
+Author / Copyright
+----
