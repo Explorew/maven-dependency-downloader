@@ -29,8 +29,8 @@ Usage
  
 ```java
 // Artifact for which we want to collect all dependencies:
-String artifactId = "asyncrestlib";
 String groupId = "eu.kartoffelquadrat";
+String artifactId = "asyncrestlib";
 String version = "1.5.2";
 
 // Where to store the dependencies (as JARs)
@@ -38,7 +38,7 @@ String version = "1.5.2";
 String targetLocation = "/Users/schieder/Desktop/myDependencies";
 
 // Call library to collect all dependencies
-DependencyResolver.resolveArtifact()
+DependencyResolver.resolveArtifact(groupId, artifactId, version, targetLocation);
 ```
 
 
