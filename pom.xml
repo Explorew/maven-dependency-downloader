@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>yizhong.ding</groupId>
-    <artifactId>maven-dependency-downloader</artifactId>
+    <artifactId>mavendependencydownloader</artifactId>
     <version>1.1</version>
+    <name>mavendependencydownloader</name>
 
     <properties>
         <!-- save recurring fields in variables-->
