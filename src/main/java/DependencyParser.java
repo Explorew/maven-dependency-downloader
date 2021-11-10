@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Yizhong Ding
  * Plays the role of parsing a list of (direct) dependency of a given Artifact. It uses HTTP based fetcher
  * to retrieve a POM file and return the Dependencies lists on the POM file.
+ * @author Yizhong Ding
  */
 public class DependencyParser {
 

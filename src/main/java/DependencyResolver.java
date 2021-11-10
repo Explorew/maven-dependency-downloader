@@ -4,14 +4,19 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @author Yizhong Ding
  * This plays the role of resolving the dependencies of an input artifact
  *      and downloads them on a given directory.
+ * @author Yizhong Ding
  */
 public class DependencyResolver {
 
     /**
-     * Write javadoc.. TODO
+     * This method resolve the dependencies of a given artifact coordinate and store the Jar files on the given path.
+     * @param groupId groupId of the target artifact
+     * @param artifactId artifactId of the target artifact
+     * @param version version of the target artifact
+     * @param downloadPath directory to store the dependencies
+     * @throws ArtifactResolveException throw ArtifactResolveException if the inputs are not valid
      */
     public static void resolveArtifact(String groupId, String artifactId, String version, String downloadPath) throws ArtifactResolveException {
 
@@ -27,14 +32,13 @@ public class DependencyResolver {
     }
 
     /**
-     * TODO: ...
-     * @param downloadPath
+     * This method checks if the download directory exists. If not, it will create the directory.
+     * @param downloadPath String of download path
      */
     private static void ensureTargetDirectoryExists(String downloadPath) {
         // Check if the directory exists.
         File directory = new File(downloadPath);
         if (!directory.exists()){
-
             // Create it if it does not yet exist.
             directory.mkdirs();
         }
@@ -49,6 +53,7 @@ public class DependencyResolver {
      * @return Returns a list of successfully downloaded artifacts.
      */
     public static List<Artifact> resolveDependencies(Artifact target, String downloadPath){
+        ensureTargetDirectoryExists(downloadPath);
         Set<Artifact> downloaded = new HashSet<>();
         Queue<Artifact> queue = new LinkedList<>();
         queue.add(target);
@@ -61,6 +66,9 @@ public class DependencyResolver {
         System.out.println("Successfully downloaded: ");
         for (Artifact artifact: downloaded) {
             System.out.println("\t" + artifact.getArtifactId() + " " + artifact.getVersion() + " " + artifact.getGroupId());
+        }
+        for ( Artifact artifact: downloaded) {
+            System.out.println(artifact);
         }
         return new ArrayList<>(downloaded);
     }
@@ -80,6 +88,7 @@ public class DependencyResolver {
         }
         catch (Exception e){
             System.out.println("Error: failed to download " + curr.toString());
+            System.out.println(e);
         }
         try{
             // Fetch dependencies list of curr artifact and add them in the help queue.

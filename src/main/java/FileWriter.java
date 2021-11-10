@@ -4,8 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * @author Yizhong Ding
  * Plays the role of writing JAR files at the given directory.
+ * @author Yizhong Ding
  */
 public class FileWriter implements AutoCloseable {
 

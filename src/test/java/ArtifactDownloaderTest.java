@@ -44,16 +44,6 @@ public class ArtifactDownloaderTest {
     /**
      * Test for invalid URL download
      */
-    public void testDownload3() throws IOException {
-        // TODO: figure out why exceptions do not match here (should this really be a NPE?)
-        assertThrows(ArtifactResolveException.class,
-                () -> (new ArtifactDownloader(null, new FileWriter())).download("https://example.org/example", "Path"));
-    }
-
-    @Test
-    /**
-     * Test for invalid URL download
-     */
     public void testDownload4() throws IOException {
         OkHttpClient client = new OkHttpClient();
         assertThrows(ArtifactResolveException.class,

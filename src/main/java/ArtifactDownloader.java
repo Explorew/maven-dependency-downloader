@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * @author Yizhong Ding Plays the role of downloading JAR files by using a http based fetcher.
- */
+ * Plays the role of downloading JAR files by using a http based fetcher.
+ * @author Yizhong Ding
+ * */
 public class ArtifactDownloader implements AutoCloseable {
     private final OkHttpClient client;
     private final FileWriter writer;
@@ -40,16 +41,19 @@ public class ArtifactDownloader implements AutoCloseable {
         }
     }
 
-    //TODO: write javadoc
+    /**
+     * This method handles the response. It throws an error if the response is not successful and write the data if it succeeded.
+     * @param response the response need to be handled
+     * @return returns how many bytes are written successfully
+     * @throws ArtifactResolveException
+     */
     private long handleResponse(Response response)  throws ArtifactResolveException {
         // If the HTTP request is not successful
         if (!response.isSuccessful()) {
             if (response.code() == 404) {
                 throw new ArtifactResolveException(ERROR_PREAMBLE + "Page not found! Error code: " + response.code());
             }
-
-            // TODO: Change this, we have twice the same check for 404
-            else if (response.code() == 404) {
+            else if (response.code() == 400) {
                 throw new ArtifactResolveException(ERROR_PREAMBLE + "Bad request! Error code: " + response.code());
             } else {
                 throw new ArtifactResolveException(ERROR_PREAMBLE + "Unknown error! Error code: " + response.code());
