@@ -16,6 +16,7 @@ public class DependencyResolver {
      * @param artifactId artifactId of the target artifact
      * @param version version of the target artifact
      * @param downloadPath directory to store the dependencies
+     * @return returns a list of dependency Artifacts
      * @throws ArtifactResolveException throw ArtifactResolveException if the inputs are not valid
      */
     public static List<Artifact> resolveArtifact(String groupId, String artifactId, String version, String downloadPath) throws ArtifactResolveException {
