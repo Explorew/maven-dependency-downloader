@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.alex</groupId>
-    <artifactId>maven-dependency-downloader</artifactId>
+    <groupId>yizhong.ding</groupId>
+    <artifactId>mavendependencydownloader</artifactId>
     <version>1.1</version>
+    <name>mavendependencydownloader</name>
 
     <properties>
         <!-- save recurring fields in variables-->
         <output.name>MavenDependencyDownloader</output.name>
-        <launcher.class>DependencyResolver</launcher.class>
 
         <!-- set compiler version and code encoding-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
