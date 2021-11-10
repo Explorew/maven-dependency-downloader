@@ -18,6 +18,7 @@ public class FileWriter implements AutoCloseable {
      * @param inputStream The Jar file to be written on the disk.
      * @param length The length of the file.
      * @return return total bytes that has been written.
+     * @throws ArtifactResolveException throws an exception if write fails.
      */
     public long write(InputStream inputStream, double length) throws ArtifactResolveException {
         if(outputStream == null) throw new ArtifactResolveException("Error: Please specify output stream!");

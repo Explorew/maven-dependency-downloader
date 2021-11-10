@@ -18,9 +18,9 @@ public class DependencyResolver {
      * @param downloadPath directory to store the dependencies
      * @throws ArtifactResolveException throw ArtifactResolveException if the inputs are not valid
      */
-    public static void resolveArtifact(String groupId, String artifactId, String version, String downloadPath) throws ArtifactResolveException {
+    public static List<Artifact> resolveArtifact(String groupId, String artifactId, String version, String downloadPath) throws ArtifactResolveException {
 
-       // Default download path is tmp directory, will only ne override if provided path argument is not null or empty.
+       // Default download path is tmp directory, will only override if provided path argument is not null or empty.
         if(downloadPath == null || downloadPath.isEmpty())
             downloadPath = System.getProperty("java.io.tmpdir");
 
@@ -28,7 +28,7 @@ public class DependencyResolver {
         ensureTargetDirectoryExists(downloadPath);
 
         Artifact artifact = handleInputArtifact(groupId, artifactId, version);
-        resolveDependencies(artifact, downloadPath);
+        return resolveDependencies(artifact, downloadPath);
     }
 
     /**
@@ -77,6 +77,7 @@ public class DependencyResolver {
      * Helper method that visits dependency Graph nodes.
      * @param downloaded a set of successfully downloaded Artifacts
      * @param queue queue used for BFS traverse the dependency graph
+     * @param downloadPath path to store Jar files
      */
     public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath) {
         Artifact curr = queue.poll();
@@ -104,7 +105,7 @@ public class DependencyResolver {
     /**
      * This method validates the user entered coordinate of an artifact as well as the directory of output jar files.
      * @return An Artifact object created by the given artifact coordinate.
-     * @throws Exception Throw an exception if the input is not valid.
+     * @throws ArtifactResolveException Throw an exception if the input is not valid.
      * @param groupId input groupId
      * @param artifactId input artifactId
      * @param version input version
@@ -120,7 +121,9 @@ public class DependencyResolver {
     /**
      * The method plays the role of downloading Artifact.
      * @param artifact The maven artifact to be downloaded.
-     * @throws IOException Throw an exception if it fails to write the file, or it fails to fetch the Jar file online.
+     * @param downloadPath The path to store Jar files.
+     * @throws ArtifactResolveException Throw an exception if it fails to fetch the Jar file online.
+     * @throws IOException Throw an exception if it fails to write the file.
      */
     public static void download(Artifact artifact, String downloadPath) throws ArtifactResolveException, IOException {
         OutputStream outputStream = new FileOutputStream(downloadPath + '/' + artifact + ".jar");

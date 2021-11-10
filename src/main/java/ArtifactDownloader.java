@@ -30,6 +30,7 @@ public class ArtifactDownloader implements AutoCloseable {
      * @param url  The URL of a maven library.
      * @param path The path of the target jar file in the maven library.
      * @return Returns the length written on the disk.
+     * @throws ArtifactResolveException throws exception if download fails.
      */
     public long download(String url, String path) throws ArtifactResolveException {
         Request request = new Request.Builder().url(url + path).build();
