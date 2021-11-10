@@ -1,3 +1,5 @@
+package yizhong.ding.mavendependencydownloader;
+
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 
@@ -7,6 +9,7 @@ import okhttp3.OkHttpClient;
 import org.junit.Test;
 
 public class ArtifactDownloaderTest {
+
     @Test
     /**
      * Test for the constructor of ArtifactDownloader

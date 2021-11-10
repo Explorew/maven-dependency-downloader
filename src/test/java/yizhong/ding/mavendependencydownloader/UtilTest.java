@@ -1,3 +1,5 @@
+package yizhong.ding.mavendependencydownloader;
+
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;

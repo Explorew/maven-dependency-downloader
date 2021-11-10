@@ -1,3 +1,5 @@
+package yizhong.ding.mavendependencydownloader;
+
 import org.jdom2.CDATA;
 import org.jdom2.Comment;
 import org.jdom2.Element;

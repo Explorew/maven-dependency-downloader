@@ -1,3 +1,5 @@
+package yizhong.ding.mavendependencydownloader;
+
 /**
  * Util class providing the common methods
  *  and URL/Path configurations for the project.

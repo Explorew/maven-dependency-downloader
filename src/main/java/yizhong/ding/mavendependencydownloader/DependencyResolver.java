@@ -1,3 +1,5 @@
+package yizhong.ding.mavendependencydownloader;
+
 import okhttp3.OkHttpClient;
 
 import java.io.*;

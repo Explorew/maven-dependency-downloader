@@ -1,3 +1,5 @@
+package yizhong.ding.mavendependencydownloader;
+
 import org.junit.Test;
 
 import java.io.File;

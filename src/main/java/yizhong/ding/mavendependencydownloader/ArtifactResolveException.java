@@ -1,3 +1,5 @@
+package yizhong.ding.mavendependencydownloader;
+
 public class ArtifactResolveException extends Exception {
     /**
      * Custom exception that can be thrown if anything goes wrong during artifact resolving.
