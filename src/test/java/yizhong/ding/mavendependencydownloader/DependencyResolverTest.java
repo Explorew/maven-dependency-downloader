@@ -22,7 +22,6 @@ public class DependencyResolverTest {
         Artifact target = new Artifact("junit", "junit", "4.13.2");
         List<Artifact> list = new ArrayList<>();
         list.add(new Artifact("junit", "junit", "4.13.2"));
-        list.add(new Artifact("org.hamcrest", "hamcrest-library", "1.3"));
         list.add(new Artifact("org.hamcrest", "hamcrest-core", "1.3"));
         assertEquals(list, DependencyResolver.resolveDependencies(target, "./temp"));
         File folder = new File("./temp");
@@ -37,7 +36,6 @@ public class DependencyResolverTest {
         Artifact target = new Artifact("junit", "junit", "4.13.2");
         List<Artifact> list = new ArrayList<>();
         list.add(new Artifact("junit", "junit", "4.13.2"));
-        list.add(new Artifact("org.hamcrest", "hamcrest-library", "1.3"));
         list.add(new Artifact("org.hamcrest", "hamcrest-core", "1.3"));
         assertEquals(list, DependencyResolver.resolveArtifact("junit", "junit", "4.13.2", "./temp"));
         File folder = new File("./temp");

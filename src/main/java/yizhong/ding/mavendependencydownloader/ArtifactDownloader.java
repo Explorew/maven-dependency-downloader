@@ -5,6 +5,8 @@ import okhttp3.*;
 import java.io.IOException;
 import java.util.Objects;
 
+//TODO: close socket?
+
 /**
  * Plays the role of downloading JAR files by using a http based fetcher.
  * @author Yizhong Ding

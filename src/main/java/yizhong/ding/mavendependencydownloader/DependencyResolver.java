@@ -12,6 +12,10 @@ import java.util.*;
  */
 public class DependencyResolver {
 
+    public static void main(String[] args) throws ArtifactResolveException {
+        resolveArtifact("org.springframework.boot", "spring-boot-starter-logging", "2.2.6.RELEASE", "./temp");
+    }
+
     /**
      * This method resolve the dependencies of a given artifact coordinate and store the Jar files on the given path.
      * @param groupId groupId of the target artifact
@@ -70,9 +74,6 @@ public class DependencyResolver {
         for (Artifact artifact: downloaded) {
             System.out.println("\t" + artifact.getArtifactId() + " " + artifact.getVersion() + " " + artifact.getGroupId());
         }
-        for ( Artifact artifact: downloaded) {
-            System.out.println(artifact);
-        }
         return new ArrayList<>(downloaded);
     }
 
@@ -84,7 +85,10 @@ public class DependencyResolver {
      */
     public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath) {
         Artifact curr = queue.poll();
-        if(downloaded.contains(curr)) return;
+        if(downloaded.contains(curr)){
+            System.out.println("!!!! Visited: " + curr);
+            return;
+        }
         try{
             // Download the visited artifact and add it in the set.
             download(curr, downloadPath);
@@ -97,7 +101,12 @@ public class DependencyResolver {
         try{
             // Fetch dependencies list of curr artifact and add them in the help queue.
             List<Artifact> dependencies = DependencyParser.fetchDependencies(curr);
-            curr.setDependencies(dependencies);
+
+//TODO: Remove after meeting
+//            System.out.println("===========");
+//            System.out.println(curr);
+//            System.out.println(dependencies);
+
             queue.addAll(dependencies);
         }
         catch(Error error){

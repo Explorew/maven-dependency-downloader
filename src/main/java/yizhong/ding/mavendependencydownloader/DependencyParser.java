@@ -62,6 +62,15 @@ public class DependencyParser {
      */
     private static void getDependencyList(List<Artifact> result, Element dependencies, Namespace ns, Element rootNode, Artifact artifact) {
         for (Element target : dependencies.getChildren("dependency", ns)) {
+            if(target.getChild("scope", ns) != null ){
+                String scope = target.getChild("scope", ns).getValue();
+                // If the scope of the dependency is test, just skip
+                if(scope.equals("test") || scope.equals("provided") || scope.equals("system") || scope.equals("import")) continue;
+            }
+            if(target.getChild("optional", ns) != null
+                    && target.getChild("optional", ns).getValue().equals("true")){
+                continue;
+            }
             String childArtifactId = target.getChild("artifactId", ns).getValue();
             String childGroupId = target.getChild("groupId", ns).getValue();
             Element version = target.getChild("version", ns);
