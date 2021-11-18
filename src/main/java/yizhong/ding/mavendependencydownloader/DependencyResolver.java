@@ -39,6 +39,18 @@ public class DependencyResolver {
     }
 
     /**
+     * Overloaded method of previous. See javadoc above.
+     * @param artifact as the target artifact to collect with all transitive dependencies.
+     * @param downloadPath directory to store the dependencies
+     * @return list of transitive dependency Artifacts (location on disk)
+     * @throws ArtifactResolveException
+     */
+    public static List<Artifact> resolveArtifact(Artifact artifact, String downloadPath) throws ArtifactResolveException {
+        return resolveArtifact(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), downloadPath);
+    }
+
+
+    /**
      * This method checks if the download directory exists. If not, it will create the directory.
      * @param downloadPath String of download path
      */
@@ -86,7 +98,8 @@ public class DependencyResolver {
     public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath) {
         Artifact curr = queue.poll();
         if(downloaded.contains(curr)){
-            System.out.println("!!!! Visited: " + curr);
+            //TODO: use Log4J if you need to log output.
+//            System.out.println("!!!! Visited: " + curr);
             return;
         }
         try{
