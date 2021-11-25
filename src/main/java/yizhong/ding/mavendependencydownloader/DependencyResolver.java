@@ -13,7 +13,9 @@ import java.util.*;
 public class DependencyResolver {
 
     public static void main(String[] args) throws ArtifactResolveException {
-        resolveArtifact("org.springframework.boot", "spring-boot-starter-logging", "2.2.6.RELEASE", "./temp");
+        resolveArtifact("org.springframework.boot",
+                "spring-boot-starter-web",
+                "2.2.6.RELEASE", "./temp");
     }
 
     /**

@@ -103,7 +103,12 @@ public class DependencyParser {
         String childVersion;
         // If version is not specified in the POM file, search on maven library.
         if (version == null) {
-            childVersion = searchOnlineVersion(childGroupId, childArtifactId);
+            // If version is not specified, first find from parent version
+            System.out.println("~~~~~" + childArtifactId + " " + childGroupId);
+            childVersion = getFromParentVersion(childGroupId, childArtifactId, rootNode,ns);
+            if (childVersion == null) {
+                childVersion = searchOnlineVersion(childGroupId, childArtifactId);
+            }
             if (childVersion == null) {
                 System.out.println("Error: Version not found for: " + childArtifactId + " " + childGroupId);
             }
@@ -119,7 +124,7 @@ public class DependencyParser {
         // If version is specified in property element
         else if (version.getValue().startsWith("${")) {
             childVersion = searchPropertyVersion(rootNode, version.getValue(), ns);
-            // If version is not specified, search available version online.
+            // If version is not specified, then search available version online.
             // Eg: https://search.maven.org/classic/remotecontent?filepath=net/bytebuddy/byte-buddy-agent/1.11.21/byte-buddy-agent-1.11.21.pom
             if (childVersion == null) childVersion = searchOnlineVersion(childGroupId, childArtifactId);
         }
@@ -129,6 +134,96 @@ public class DependencyParser {
         }
         return childVersion;
     }
+
+    /**
+     * This method will fetch the dependency version by parsing parent's Pom file.
+     * @param childGroupId target groupId.
+     * @param childArtifactId target artifactId.
+     * @param childRootNode the root node of the Pom file.
+     * @param ns namespace.
+     * @return returns the version. If it does not exist, return null.
+     */
+    private static String getFromParentVersion(String childGroupId, String childArtifactId, Element childRootNode, Namespace ns) {
+        //TODO: refactor this method
+        Element parent = childRootNode.getChild("parent", ns);
+        if(parent == null) return null;
+        String parentVersion = parent.getChild("version", ns).getValue();
+        String parentArtifactId = parent.getChild("artifactId", ns).getValue();
+        String parentGroupId = parent.getChild("groupId", ns).getValue();
+
+
+        String REMOTE_URL = Util.getPomURL();
+        Artifact parentArtifact = new Artifact(parentGroupId, parentArtifactId, parentVersion);
+        Document doc = parseDoc(REMOTE_URL, parentArtifact);
+        // Try another way to construct the URL
+        if (doc == null){
+            doc = parseDocReversely(REMOTE_URL, parentArtifact);
+        }
+        // If the dependencies are not found, return the empty list
+        if (doc == null) {
+            return null;
+        }
+
+        //get dependencies list
+        Element rootNode = doc.getRootElement();
+        // Check if the POM file contains "dependencyManagement" element
+        Element dependencies = rootNode.getChild("dependencyManagement", ns);
+        // If not, check for "dependencies" element
+        if (dependencies == null) {
+            dependencies = rootNode.getChild("dependencies", ns);
+        } else {
+            dependencies = dependencies.getChild("dependencies", ns);
+        }
+        String version = null;
+
+        System.out.println(parentArtifact + "" + dependencies.getChildren());
+
+        //If the POM file does contain "dependencyManagement" or "dependencies"  element
+        if (dependencies != null) {
+            version =  getDependencyVersion(dependencies, ns, rootNode, childArtifactId, childGroupId, parentArtifact);
+        }
+        //get target dependency
+
+        System.out.println(parentArtifactId+ ": " +version == null ? "null" : version);
+        return version;
+    }
+
+    /**
+     * This method will get the version of a given artifact in a parent Pom file.
+     * @param dependencies dependency list of parent.
+     * @param ns namespace.
+     * @param rootNode rootnode of parent Pom file.
+     * @param childArtifactId target artifactID.
+     * @param childGroupId target groupId.
+     * @param parentArtifact parent artifact.
+     * @return returns version if it exists. returns null if it does not exist.
+     */
+    private static String getDependencyVersion(Element dependencies, Namespace ns, Element rootNode, String childArtifactId, String childGroupId, Artifact parentArtifact) {
+        String childVersion = null;
+        for (Element target : dependencies.getChildren("dependency", ns)) {
+
+//            System.out.println("--------"+target.getChild("artifactId", ns).getValue()
+//                    + ":  " + childArtifactId + " | "
+//                    + target.getChild("groupId", ns).getValue() +": "+
+//                    childGroupId);
+
+
+            if(!childArtifactId.equals(target.getChild("artifactId", ns).getValue())) continue;
+
+
+            Element version = target.getChild("version", ns);
+
+            System.out.println("-----" + version);
+
+            childVersion = parseDependencyVersion(childGroupId, childArtifactId, version, rootNode, ns, parentArtifact);
+            if(childVersion != null) break;
+        }
+        return childVersion;
+
+    }
+
+
+
 
     /**
      * It returns a Document object fetched by SAXBuilder.
