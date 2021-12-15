@@ -17,6 +17,46 @@ public class DependencyResolverTest {
     private final String TESTING_TEMP_DIR = "./test";
 
 
+    // ToDo: write a test that checks for these exact artefacts:
+    /*
+    [INFO]    +- org.springframework.boot:spring-boot-starter:jar:2.2.6.RELEASE:compile
+[INFO]    |  +- org.springframework.boot:spring-boot:jar:2.2.6.RELEASE:compile
+[INFO]    |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.2.6.RELEASE:compile
+[INFO]    |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.2.6.RELEASE:compile
+[INFO]    |  |  +- ch.qos.logback:logback-classic:jar:1.2.3:compile
+[INFO]    |  |  |  +- ch.qos.logback:logback-core:jar:1.2.3:compile
+[INFO]    |  |  |  \- org.slf4j:slf4j-api:jar:1.7.25:compile
+[INFO]    |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.12.1:compile
+[INFO]    |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.12.1:compile
+[INFO]    |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.30:compile
+[INFO]    |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO]    |  +- org.springframework:spring-core:jar:5.2.5.RELEASE:compile
+[INFO]    |  |  \- org.springframework:spring-jcl:jar:5.2.5.RELEASE:compile
+[INFO]    |  \- org.yaml:snakeyaml:jar:1.25:runtime
+[INFO]    +- org.springframework.boot:spring-boot-starter-json:jar:2.2.6.RELEASE:compile
+[INFO]    |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.10.3:compile
+[INFO]    |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.10.3:compile
+[INFO]    |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.10.3:compile
+[INFO]    |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.10.3:compile
+[INFO]    |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.10.3:compile
+[INFO]    |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.10.3:compile
+[INFO]    +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.2.6.RELEASE:compile
+[INFO]    |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.33:compile
+[INFO]    |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.33:compile
+[INFO]    |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.33:compile
+[INFO]    +- org.springframework.boot:spring-boot-starter-validation:jar:2.2.6.RELEASE:compile
+[INFO]    |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO]    |  \- org.hibernate.validator:hibernate-validator:jar:6.0.18.Final:compile
+[INFO]    |     +- org.jboss.logging:jboss-logging:jar:3.3.2.Final:compile
+[INFO]    |     \- com.fasterxml:classmate:jar:1.3.4:compile
+[INFO]    +- org.springframework:spring-web:jar:5.2.5.RELEASE:compile
+[INFO]    |  \- org.springframework:spring-beans:jar:5.2.5.RELEASE:compile
+[INFO]    \- org.springframework:spring-webmvc:jar:5.2.5.RELEASE:compile
+[INFO]       +- org.springframework:spring-aop:jar:5.2.5.RELEASE:compile
+[INFO]       +- org.springframework:spring-context:jar:5.2.5.RELEASE:compile
+[INFO]       \- org.springframework:spring-expression:jar:5.2.5.RELEASE:compile
+     */
+
     @Test
     /**
      * Test for downloading the dependency of junit
@@ -57,9 +97,9 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency hull of spring boot matches the expected list.
      */
-    public void testSpringBootTransitiveAmount2() throws ArtifactResolveException {
-        Artifact springBoot = new Artifact("com.google.guava", "guava", "31.0.1-jre");
-        verifyArtifactDependencyAmount(springBoot, 7);
+    public void testGoogleGuavaTransitiveAmount() throws ArtifactResolveException {
+        Artifact guava = new Artifact("com.google.guava", "guava", "31.0.1-jre");
+        verifyArtifactDependencyAmount(guava, 7);
     }
 
     @Test
