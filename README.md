@@ -9,7 +9,7 @@ dependencies of a given artifact.
 
 Algorithm
 ----- 
-This program utilizes a BFS traversal algorithm with the help of Queue data structure.
+This program utilizes a BFS traversal algorithm with the help of an extra queue.
 In each iteration, it removes the first node from the queue, and appends all the transitive
 dependencies to the queue.
 
