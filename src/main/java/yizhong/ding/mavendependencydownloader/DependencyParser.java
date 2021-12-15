@@ -7,9 +7,12 @@ import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,7 @@ public class DependencyParser {
         Document doc = getDocument(artifact);
         // If the dependencies are not found, return the empty list
         if (doc == null) {
-            System.out.println("Failed to find dependencies for (No POM file): " + artifact.toString());
+            Logger.error("Failed to find dependencies for (No POM file): " + artifact.toString());
             return result;
         }
         Element rootNode = doc.getRootElement();
@@ -131,7 +134,7 @@ public class DependencyParser {
                 childVersion = searchOnlineVersion(childGroupId, childArtifactId);
             }
             if (childVersion == null) {
-                System.out.println("Error: Version not found for: " + childArtifactId + " " + childGroupId);
+                Logger.error("Error: Version not found for: " + childArtifactId + " " + childGroupId);
             }
         }
         // Check if version is not variable. eg: ${pom.version}.
@@ -339,9 +342,10 @@ public class DependencyParser {
             if (responses != null) {
                 return fetchVersion(responses);
             }
-        } catch (Exception e) {
-            System.out.println(e);
+        } catch (IOException | URISyntaxException | JDOMException e) {
+            Logger.error(e.getCause());
         }
+
         // If no version is found, just return null;
         return null;
     }
