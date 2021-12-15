@@ -34,6 +34,10 @@ Build a self-contained jar for this library:
 
       $ mvn clean package
 
+To inject into your local maven repository (```~/.m2```):
+
+      $ mvn install:install-file -Dfile=target/MavenDependencyDownloader.jar -DgroupId=yizhong.ding -DartifactId=maven-dependency-downloader -Dversion=1.1.2 -Dpackaging=jar -DcreateChecksum=true
+
 Usage
 -----
 
