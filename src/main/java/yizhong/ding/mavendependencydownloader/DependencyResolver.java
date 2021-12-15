@@ -1,6 +1,7 @@
 package yizhong.ding.mavendependencydownloader;
 
 import okhttp3.OkHttpClient;
+import org.pmw.tinylog.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -9,14 +10,14 @@ import java.util.*;
  * This plays the role of resolving the dependencies of an input artifact
  *      and downloads them on a given directory.
  * @author Yizhong Ding
+ *
+ * TODO:
+     * 3. refactor
+     * 4. describe the algorithm (queue poll.... append etc)
+ * 1. logger
+ * 2. Unit test
  */
 public class DependencyResolver {
-
-    public static void main(String[] args) throws ArtifactResolveException {
-        resolveArtifact("org.springframework.boot",
-                "spring-boot-starter-web",
-                "2.2.6.RELEASE", "./temp");
-    }
 
     /**
      * This method resolve the dependencies of a given artifact coordinate and store the Jar files on the given path.
@@ -73,20 +74,32 @@ public class DependencyResolver {
      * @param downloadPath as the location where tha resolved JARs should be stored on disk.
      * @return Returns a list of successfully downloaded artifacts.
      */
-    public static List<Artifact> resolveDependencies(Artifact target, String downloadPath){
+    public static List<Artifact> resolveDependencies(Artifact target, String downloadPath) throws ArtifactResolveException{
         ensureTargetDirectoryExists(downloadPath);
         Set<Artifact> downloaded = new HashSet<>();
+        Set<Artifact> excludedDependencies = new HashSet<>();
+        Set<Artifact> deleteSet = new HashSet<>();
         Queue<Artifact> queue = new LinkedList<>();
         queue.add(target);
+        // In each iteration, removes the first node, and appends all the transitive dependencies to the queue.
         while(!queue.isEmpty()){
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                traverseDependencyNode(downloaded, queue, downloadPath);
+            traverseDependencyNode(downloaded, queue, downloadPath, excludedDependencies);
+        }
+        // Remove exclusions from the download set and replace the artifact in exclusion set for deleting
+        for (Artifact artifact : excludedDependencies) {
+            if(downloaded.contains(artifact)){
+                deleteSet.add(Util.getFromSet(downloaded, artifact));
             }
         }
-        System.out.println("Successfully downloaded: ");
+        downloaded.removeAll(excludedDependencies);
+        StringBuilder res = new StringBuilder("Successfully downloaded: \n");
         for (Artifact artifact: downloaded) {
-            System.out.println("\t" + artifact.getArtifactId() + " " + artifact.getVersion() + " " + artifact.getGroupId());
+            res.append("\t" + artifact.getArtifactId() + " " + artifact.getVersion() + " " + artifact.getGroupId() + "\n");
+        }
+        Logger.info(res);
+        // Remove the artifact whi
+        for (Artifact artifact: deleteSet) {
+            removeExclusion(artifact, downloadPath);
         }
         return new ArrayList<>(downloaded);
     }
@@ -96,36 +109,34 @@ public class DependencyResolver {
      * @param downloaded a set of successfully downloaded Artifacts
      * @param queue queue used for BFS traverse the dependency graph
      * @param downloadPath path to store Jar files
+     * @param excludedDependencies
      */
-    public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath) {
-        Artifact curr = queue.poll();
-        if(downloaded.contains(curr)){
-            //TODO: use Log4J if you need to log output.
-//            System.out.println("!!!! Visited: " + curr);
-            return;
+    public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath, Set<Artifact> excludedDependencies) throws ArtifactResolveException {
+        Artifact queueHead = queue.poll();
+        if(downloaded.contains(queueHead)) return; //avoid cycle in the dependency graph
+        // add all exclusions to the set in order to avoid downloading unnecessary artifact
+        if(queueHead.getExclusions() != null){
+            for (Artifact artifact : queueHead.getExclusions()) {
+                //To avoid local exclusion:
+                //  https://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html
+                if(!queue.contains(artifact) && !downloaded.contains(artifact)) excludedDependencies.add(artifact);
+            }
         }
         try{
             // Download the visited artifact and add it in the set.
-            download(curr, downloadPath);
-            downloaded.add(curr);
+            download(queueHead, downloadPath);
+            downloaded.add(queueHead);
         }
-        catch (Exception e){
-            System.out.println("Error: failed to download " + curr.toString());
-            System.out.println(e);
+        catch (IOException e){
+            throw new ArtifactResolveException("Error: failed to download " + queueHead.toString() + ". " + e.getMessage());
         }
         try{
             // Fetch dependencies list of curr artifact and add them in the help queue.
-            List<Artifact> dependencies = DependencyParser.fetchDependencies(curr);
-
-//TODO: Remove after meeting
-//            System.out.println("===========");
-//            System.out.println(curr);
-//            System.out.println(dependencies);
-
+            List<Artifact> dependencies = DependencyParser.fetchDependencies(queueHead);
             queue.addAll(dependencies);
         }
         catch(Error error){
-            System.out.println(error);
+            throw new ArtifactResolveException(error.getMessage());
         }
     }
 
@@ -138,7 +149,6 @@ public class DependencyResolver {
      * @param version input version
      */
     static Artifact handleInputArtifact(String groupId, String artifactId, String version) throws ArtifactResolveException {
-
         if(groupId.length() == 0 || artifactId.length() == 0 || version.length() == 0){
             throw new ArtifactResolveException("Error: Input artifact is not valid");
         }
@@ -161,4 +171,18 @@ public class DependencyResolver {
         String path = Util.getJarPath(artifact);
         downloader.download(Util.getJarURL(), path);
     }
-}
+
+    /**
+     * The method plays the role of deleting Artifact file on a give path.
+     * @param artifact target artifact.
+     * @param downloadPath given path.
+     * @throws ArtifactResolveException throw exception if deletion fails.
+     */
+    public static void removeExclusion(Artifact artifact, String downloadPath) throws ArtifactResolveException {
+        File artifactFile = new File(downloadPath + '/' + artifact + ".jar");
+        Boolean res = artifactFile.delete();
+        if (!res) {
+            throw new ArtifactResolveException("Error: Failed to delete exclusion (" + artifact + ").");
+        }
+    }
+    }

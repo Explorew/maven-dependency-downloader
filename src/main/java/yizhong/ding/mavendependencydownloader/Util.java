@@ -1,5 +1,7 @@
 package yizhong.ding.mavendependencydownloader;
 
+import java.util.Set;
+
 /**
  * Util class providing the common methods
  *  and URL/Path configurations for the project.
@@ -83,5 +85,18 @@ public class Util {
      */
     public static String getSearchURL(){
         return "https://search.maven.org/";
+    }
+
+    /**
+     * Get an element from a Set.
+     * @param set target set.
+     * @param artifact target artifact.
+     * @return return the result artifact got from the set.
+     */
+    public static Artifact getFromSet(Set<Artifact> set, Artifact artifact) {
+        for (Artifact currArtifact : set) {
+            if(currArtifact.equals(artifact)) return currArtifact;
+        }
+        return null;
     }
 }

@@ -23,24 +23,5 @@ public class ArtifactDownloaderTest {
         assertSame(fileWriter, actualArtifactDownloader.getWriter());
     }
 
-    @Test
-    /**
-     * Test for invalid URL download
-     */
-    public void testDownload() throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        assertThrows(ArtifactResolveException.class,
-                () -> (new ArtifactDownloader(client, new FileWriter())).download("https://example.org/example", "Path"));
-    }
-
-    @Test
-    /**
-     * Test for invalid URL download
-     */
-    public void testDownload4() throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        assertThrows(ArtifactResolveException.class,
-                () -> (new ArtifactDownloader(client, new FileWriter())).download("https://example.org/example", "42"));
-    }
 }
 

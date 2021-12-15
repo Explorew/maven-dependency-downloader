@@ -1,11 +1,10 @@
 package yizhong.ding.mavendependencydownloader;
 
 import okhttp3.*;
+import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.Objects;
-
-//TODO: close socket?
 
 /**
  * Plays the role of downloading JAR files by using a http based fetcher.
@@ -55,14 +54,8 @@ public class ArtifactDownloader implements AutoCloseable {
     private long handleResponse(Response response)  throws ArtifactResolveException {
         // If the HTTP request is not successful
         if (!response.isSuccessful()) {
-            if (response.code() == 404) {
-                throw new ArtifactResolveException(ERROR_PREAMBLE + "Page not found! Error code: " + response.code());
-            }
-            else if (response.code() == 400) {
-                throw new ArtifactResolveException(ERROR_PREAMBLE + "Bad request! Error code: " + response.code());
-            } else {
-                throw new ArtifactResolveException(ERROR_PREAMBLE + "Unknown error! Error code: " + response.code());
-            }
+            Logger.error(ERROR_PREAMBLE + "Error code: " + response.code());
+            return 0;
         }
         // If the HTTP request is successful
         else {

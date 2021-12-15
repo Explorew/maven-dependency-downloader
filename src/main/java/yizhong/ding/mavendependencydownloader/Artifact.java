@@ -14,6 +14,7 @@ public class Artifact {
     private String artifactId;
     private String version;
     private List<Artifact> dependencies;
+    private List<Artifact> exclusions;
 
     /**
      * Constructor of Artifact class taking an Artifact coordinates as parameters.
@@ -61,6 +62,12 @@ public class Artifact {
     }
 
     /**
+     * Getter for exclusions
+     * @return returns the exclusions (a List of Artifacts) of this Artifact
+     */
+    public List<Artifact> getExclusions() { return exclusions; }
+
+    /**
      * Setter for group id
      * @param groupId new group id
      */
@@ -91,6 +98,12 @@ public class Artifact {
     public void setDependencies(List<Artifact> dependencies) {
         this.dependencies = dependencies;
     }
+
+    /**
+     * Setter for exclusions
+     * @param exclusions new exclusions List
+     */
+    public void setExclusions(List<Artifact> exclusions) { this.exclusions = exclusions; }
 
     @Override
     /**

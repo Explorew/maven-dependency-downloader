@@ -5,7 +5,13 @@ Dependency Downloader for Maven Artifact
 About 
 ----- 
 Maven-dependency-downloader is a simple tool which allows users to download all 
-dependencies of a given artifact.
+dependencies of a given artifact. 
+
+Algorithm
+----- 
+This program utilizes a BFS traversal algorithm with the help of Queue data structure.
+In each iteration, it removes the first node from the queue, and appends all the transitive
+dependencies to the queue.
 
 Prerequisite 
 ----- 
