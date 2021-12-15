@@ -95,7 +95,7 @@ public class DependencyResolverTest {
 
     @Test
     /**
-     * Test if the resolved transitive dependency hull of spring boot matches the expected list.
+     * Test if the resolved transitive dependency hull of guava matches the expected list.
      */
     public void testGoogleGuavaTransitiveAmount() throws ArtifactResolveException {
         Artifact guava = new Artifact("com.google.guava", "guava", "31.0.1-jre");
