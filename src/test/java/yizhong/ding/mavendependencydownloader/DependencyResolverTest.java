@@ -164,24 +164,24 @@ public class DependencyResolverTest {
     /**
      * Test for validating the input artifact data
      */
-    public void testHandleInputArtifact2() throws Exception {
-        assertThrows(Exception.class, () -> DependencyResolver.handleInputArtifact("", "42", "1.0.2"));
+    public void testHandleInputMissingGroupId() throws Exception {
+        assertThrows(ArtifactResolveException.class, () -> DependencyResolver.handleInputArtifact("", "42", "1.0.2"));
     }
 
     @Test
     /**
      * Test for validating the input artifact data
      */
-    public void testHandleInputArtifact3() throws Exception {
-        assertThrows(Exception.class, () -> DependencyResolver.handleInputArtifact("42", "", "1.0.2"));
+    public void testHandleInputMissingArtifactId() throws Exception {
+        assertThrows(ArtifactResolveException.class, () -> DependencyResolver.handleInputArtifact("42", "", "1.0.2"));
     }
 
     @Test
     /**
      * Test for validating the input artifact data
      */
-    public void testHandleInputArtifact4() throws Exception {
-        assertThrows(Exception.class, () -> DependencyResolver.handleInputArtifact("42", "42", ""));
+    public void testHandleInputArtifactMissingVersion() throws Exception {
+        assertThrows(ArtifactResolveException.class, () -> DependencyResolver.handleInputArtifact("42", "42", ""));
     }
 
     /**
