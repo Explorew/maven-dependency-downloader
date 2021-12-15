@@ -2,7 +2,7 @@
 Maven Dependency Downloader
 ========================================= 
 
-![version](https://img.shields.io/badge/version-1.1-brightgreen)
+![version](https://img.shields.io/badge/version-1.1.2-brightgreen)
 ![coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)
 ![building](https://img.shields.io/badge/build-passing-brightgreen)
 ![okhttp3](https://img.shields.io/badge/OkHttp3-4.9.1-blue)
@@ -55,6 +55,7 @@ String targetLocation = "/Users/schieder/Desktop/myDependencies";
 DependencyResolver.resolveArtifact(groupId, artifactId, version, targetLocation);
 ```
 
+ > Check out the minimal [demo project](https://github.com/kartoffelquadrat/MavenDependencyDownloaderDemo).
 
 
 Documentation 

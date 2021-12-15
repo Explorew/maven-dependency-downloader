@@ -39,6 +39,7 @@ public class ArtifactDownloader implements AutoCloseable {
         Request request = new Request.Builder().url(url + path).build();
         try {
             Call call = client.newCall(request);
+            Logger.info("Downloading file: "+url+path);
             return handleResponse(call.execute());
         } catch (IOException e) {
             throw new ArtifactResolveException(e.getMessage());
