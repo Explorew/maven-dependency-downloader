@@ -1,11 +1,19 @@
 
-Dependency Downloader for Maven Artifact
+Maven Dependency Downloader
 ========================================= 
+
+![version](https://img.shields.io/badge/version-1.1-brightgreen)
+![coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)
+![building](https://img.shields.io/badge/build-passing-brightgreen)
+![okhttp3](https://img.shields.io/badge/OkHttp3-4.9.1-blue)
+![tinylog](https://img.shields.io/badge/TinyLog-1.3.6-blue)
+![jdom](https://img.shields.io/badge/JDom-2.0.2-blue)
+![mockito](https://img.shields.io/badge/Mockito-3.8.0-blue)
 
 About 
 ----- 
-Maven-dependency-downloader is a simple tool which allows users to download all 
-dependencies of a given artifact. 
+The *Maven Dependency Downloader* is a simple tool which allows users to download all 
+transitive dependencies of a given artifact. 
 
 Algorithm
 ----- 

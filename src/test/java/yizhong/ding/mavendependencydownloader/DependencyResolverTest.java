@@ -131,7 +131,7 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency hull of jackson matches the expected list.
      */
-    public void testJacksonTransitiveAmount5() throws ArtifactResolveException {
+    public void testJacksonTransitiveAmount() throws ArtifactResolveException {
         Artifact jackson = new Artifact("com.fasterxml.jackson.core", "jackson-databind", "2.13.0");
         verifyArtifactDependencyAmount(jackson, 3);
     }
