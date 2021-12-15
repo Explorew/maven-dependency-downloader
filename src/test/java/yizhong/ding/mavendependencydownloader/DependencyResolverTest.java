@@ -57,11 +57,30 @@ public class DependencyResolverTest {
 [INFO]       \- org.springframework:spring-expression:jar:5.2.5.RELEASE:compile
      */
 
+    /**
+     * Helper method to delete the folder after test
+     *
+     * @param folder target folder
+     */
+    public static void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) { //some JVMs return null for empty dirs
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        folder.delete();
+    }
+
     @Test
     /**
      * Test for downloading the dependency of junit
      */
-    public void testResolveDependencies() throws ArtifactResolveException{
+    public void testResolveDependencies() throws ArtifactResolveException {
         Artifact target = new Artifact("junit", "junit", "4.13.2");
         List<Artifact> list = new ArrayList<>();
         list.add(new Artifact("junit", "junit", "4.13.2"));
@@ -104,31 +123,30 @@ public class DependencyResolverTest {
 
     @Test
     /**
-     * Test if the resolved transitive dependency hull of spring boot matches the expected list.
+     * Test if the resolved transitive dependency hull of spring boot starter matches the expected list.
      */
-    public void testSpringBootTransitiveAmount3() throws ArtifactResolveException {
-        Artifact springBoot = new Artifact("org.springframework.boot", "spring-boot-starter", "2.2.6.RELEASE");
-        verifyArtifactDependencyAmount(springBoot, 18);
+    public void testSpringBootStarterTransitiveAmount() throws ArtifactResolveException {
+        Artifact springBootStarter = new Artifact("org.springframework.boot", "spring-boot-starter", "2.2.6.RELEASE");
+        verifyArtifactDependencyAmount(springBootStarter, 18);
     }
 
     @Test
     /**
-     * Test if the resolved transitive dependency hull of spring boot matches the expected list.
+     * Test if the resolved transitive dependency hull of mockito matches the expected list.
      */
-    public void testSpringBootTransitiveAmount4() throws ArtifactResolveException {
-        Artifact springBoot = new Artifact("org.mockito", "mockito-core", "4.1.0");
-        verifyArtifactDependencyAmount(springBoot, 4);
+    public void testMockitoTransitiveAmount() throws ArtifactResolveException {
+        Artifact mockito = new Artifact("org.mockito", "mockito-core", "4.1.0");
+        verifyArtifactDependencyAmount(mockito, 4);
     }
 
     @Test
     /**
-     * Test if the resolved transitive dependency hull of spring boot matches the expected list.
+     * Test if the resolved transitive dependency hull of jackson matches the expected list.
      */
-    public void testSpringBootTransitiveAmount5() throws ArtifactResolveException {
-        Artifact springBoot = new Artifact("com.fasterxml.jackson.core", "jackson-databind", "2.13.0");
-        verifyArtifactDependencyAmount(springBoot, 3);
+    public void testJacksonTransitiveAmount5() throws ArtifactResolveException {
+        Artifact jackson = new Artifact("com.fasterxml.jackson.core", "jackson-databind", "2.13.0");
+        verifyArtifactDependencyAmount(jackson, 3);
     }
-
 
     @Test
     /**
@@ -183,23 +201,5 @@ public class DependencyResolverTest {
         int length = folder.list().length;
         deleteFolder(folder);
         assertEquals(expectedTransitiveDependencyAmount, length);
-    }
-
-    /**
-     * Helper method to delete the folder after test
-     * @param folder target folder
-     */
-    public static void deleteFolder(File folder) {
-        File[] files = folder.listFiles();
-        if(files != null) { //some JVMs return null for empty dirs
-            for(File f: files) {
-                if(f.isDirectory()) {
-                    deleteFolder(f);
-                } else {
-                    f.delete();
-                }
-            }
-        }
-        folder.delete();
     }
 }
