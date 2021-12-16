@@ -240,9 +240,9 @@ public class DependencyParser {
      * @return a newly created artifact.
      */
     private static Artifact createArtifact(Namespace ns, Element parent) {
-        String parentVersion = parent.getChild("version", ns).getValue();
         String parentArtifactId = parent.getChild("artifactId", ns).getValue();
-        String parentGroupId = parent.getChild("groupId", ns).getValue();
+        String parentGroupId =  parent.getChild("groupId", ns).getValue();
+        String parentVersion = parent.getChild("version", ns).getValue();
         Artifact parentArtifact = new Artifact(parentGroupId, parentArtifactId, parentVersion);
         return parentArtifact;
     }

@@ -1,0 +1,4 @@
+[INFO] org.mockito:mockito-core:jar:4.2.0
+[INFO] +- net.bytebuddy:byte-buddy:jar:1.12.4:compile
+[INFO] +- net.bytebuddy:byte-buddy-agent:jar:1.12.4:compile
+[INFO] \- org.objenesis:objenesis:jar:3.2:runtime

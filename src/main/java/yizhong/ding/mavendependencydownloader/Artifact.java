@@ -130,9 +130,9 @@ public class Artifact {
     @Override
     /**
      * Override toString method.
-     *  Output string would join groupId, artifactId, and version with "-" sign.
+     *  Output string would join groupId, artifactId, and version with ":" sign.
      */
     public String toString() {
-        return groupId + '-' + artifactId + '-' + version;
+        return groupId + ':' + artifactId + ':' + version;
     }
 }

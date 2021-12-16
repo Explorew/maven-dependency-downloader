@@ -25,7 +25,7 @@ public class ArtifactTest {
         assertSame(artifactList, actualArtifact.getDependencies());
         assertEquals("42", actualArtifact.getGroupId());
         assertEquals("1.0.2", actualArtifact.getVersion());
-        assertEquals("42-42-1.0.2", actualArtifact.toString());
+        assertEquals("42:42:1.0.2", actualArtifact.toString());
     }
 
     @Test

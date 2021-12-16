@@ -10,12 +10,6 @@ import java.util.*;
  * This plays the role of resolving the dependencies of an input artifact
  *      and downloads them on a given directory.
  * @author Yizhong Ding
- *
- * TODO:
-     * 3. refactor
-     * 4. describe the algorithm (queue poll.... append etc)
- * 1. logger
- * 2. Unit test
  */
 public class DependencyResolver {
 
@@ -113,7 +107,11 @@ public class DependencyResolver {
      */
     public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath, Set<Artifact> excludedDependencies) throws ArtifactResolveException {
         Artifact queueHead = queue.poll();
-        if(downloaded.contains(queueHead)) return; //avoid cycle in the dependency graph
+        if(downloaded.contains(queueHead)) { //avoid cycle in the dependency graph
+            downloaded.remove(queueHead);
+            downloaded.add(queueHead);
+            return;
+        }
         // add all exclusions to the set in order to avoid downloading unnecessary artifact
         if(queueHead.getExclusions() != null){
             for (Artifact artifact : queueHead.getExclusions()) {
