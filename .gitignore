@@ -151,7 +151,6 @@ tags
 # Persistent undo
 [._]*.un~
 
-.txt
 
 # End of https://www.gitignore.io/api/vim,macos,maven,intellij
 
