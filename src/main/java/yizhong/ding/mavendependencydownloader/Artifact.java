@@ -105,12 +105,12 @@ public class Artifact {
      */
     public void setExclusions(List<Artifact> exclusions) { this.exclusions = exclusions; }
 
-    @Override
     /**
      * Equals methods compares the value of two Artifacts.
      *  Note: The override equals method only checks if values of groupId
      *  and artifactId of two Artifacts are equal.
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -119,19 +119,19 @@ public class Artifact {
                 Objects.equals(artifactId, artifact.artifactId);
     }
 
-    @Override
     /**
      * Override hashCode method.
      */
+    @Override
     public int hashCode() {
         return Objects.hash(groupId, artifactId);
     }
 
-    @Override
     /**
      * Override toString method.
      *  Output string would join groupId, artifactId, and version with ":" sign.
      */
+    @Override
     public String toString() {
         return groupId + ':' + artifactId + ':' + version;
     }

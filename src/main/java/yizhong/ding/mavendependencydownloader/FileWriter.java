@@ -54,10 +54,10 @@ public class FileWriter implements AutoCloseable {
         return outputStream;
     }
 
-    @Override
     /**
      * Automatically close the outputStream after saving the JAR file.
      */
+    @Override
     public void close() throws IOException {
         outputStream.close();
     }

@@ -40,7 +40,7 @@ public class DependencyResolver {
      * @param artifact as the target artifact to collect with all transitive dependencies.
      * @param downloadPath directory to store the dependencies
      * @return list of transitive dependency Artifacts (location on disk)
-     * @throws ArtifactResolveException
+     * @throws ArtifactResolveException throw ArtifactResolveException if fail to resolve Artifact
      */
     public static List<Artifact> resolveArtifact(Artifact artifact, String downloadPath) throws ArtifactResolveException {
         return resolveArtifact(artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), downloadPath);
@@ -67,6 +67,7 @@ public class DependencyResolver {
      * @param target the target Artifact
      * @param downloadPath as the location where tha resolved JARs should be stored on disk.
      * @return Returns a list of successfully downloaded artifacts.
+     * @throws ArtifactResolveException if fail to resolve dependencies.
      */
     public static List<Artifact> resolveDependencies(Artifact target, String downloadPath) throws ArtifactResolveException{
         ensureTargetDirectoryExists(downloadPath);
@@ -100,14 +101,16 @@ public class DependencyResolver {
 
     /**
      * Helper method that visits dependency Graph nodes.
-     * @param downloaded a set of successfully downloaded Artifacts
+
+     * @param downloaded downloaded a set of successfully downloaded Artifacts
      * @param queue queue used for BFS traverse the dependency graph
-     * @param downloadPath path to store Jar files
-     * @param excludedDependencies
+     * @param downloadPath downloadPath path to store Jar files
+     * @param excludedDependencies the set used to
+     * @throws ArtifactResolveException if fail to resolve dependency
      */
     public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath, Set<Artifact> excludedDependencies) throws ArtifactResolveException {
         Artifact queueHead = queue.poll();
-        if(downloaded.contains(queueHead)) { //avoid cycle in the dependency graph
+        if(downloaded.contains(queueHead)) { // avoid cycle in the dependency graph and update version
             downloaded.remove(queueHead);
             downloaded.add(queueHead);
             return;
