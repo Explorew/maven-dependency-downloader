@@ -3,6 +3,7 @@ package yizhong.ding.mavendependencydownloader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.pmw.tinylog.Logger;
 
 import java.io.*;
 import java.util.*;
@@ -135,11 +136,11 @@ public class DependencyResolverTest {
         Set<Artifact> expected = readTestFile(filename);
 
         // Verify amount
-        assertTrue(dependencies.size() == expected.size());
+        assertTrue("Expected dependencies: " + expected.size() + ", found: " + dependencies.size(), dependencies.size() == expected.size());
 
         // Verify exact match, every retrieved artefact must be in list of expected artefacts
         for (Artifact dependency : dependencies) {
-            assertTrue(expected.contains(dependency));
+            assertTrue("Unit test downloaded " + dependency + ", but this artifact does not match an entry in the expected list.", expected.contains(dependency));
         }
 
         // Delete the test download folder

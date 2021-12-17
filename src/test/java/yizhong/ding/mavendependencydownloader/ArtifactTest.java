@@ -1,13 +1,10 @@
 package yizhong.ding.mavendependencydownloader;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class ArtifactTest {
     @Test
@@ -51,13 +48,14 @@ public class ArtifactTest {
     @Test
     /**
      * Test for override equals method
-     *  Note: Artifacts with same groupId and artifactId are considered as equal.
      */
     public void testEquals3() {
         Artifact artifact = new Artifact("42", "42", "1.0.2");
         Artifact artifact1 = new Artifact("42", "42", "1.0.3");
 
-        assertTrue(artifact.equals(artifact1));
+        // Version is not a match criteria. See javadoc in Artifact class for reason.
+        assertEquals(artifact, artifact1);
+
         int expectedHashCodeResult = artifact.hashCode();
         assertEquals(expectedHashCodeResult, artifact1.hashCode());
     }

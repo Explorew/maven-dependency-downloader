@@ -109,6 +109,7 @@ public class Artifact {
      * Equals methods compares the value of two Artifacts.
      *  Note: The override equals method only checks if values of groupId
      *  and artifactId of two Artifacts are equal.
+     *  Motivation: Maven does not pull the same artifact twice. If already collected (in a different version) it should be considered covered, and not get re-downloaded.
      */
     @Override
     public boolean equals(Object o) {
