@@ -1,4 +1,4 @@
-org.springframework.boot:springboot-starter-web:jar:2.2.6.RELEASE
+org.springframework.boot:spring-boot-starter-web:jar:2.2.6.RELEASE
 org.springframework.boot:spring-boot-starter:jar:2.2.6.RELEASE:compile
 org.springframework.boot:spring-boot:jar:2.2.6.RELEASE:compile
 org.springframework.boot:spring-boot-autoconfigure:jar:2.2.6.RELEASE:compile

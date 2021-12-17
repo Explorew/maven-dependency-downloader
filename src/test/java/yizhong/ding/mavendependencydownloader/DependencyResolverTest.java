@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -17,6 +16,25 @@ import static org.junit.Assert.assertTrue;
 public class DependencyResolverTest {
 
     private final String TESTING_TEMP_DIR = "./test";
+
+    /**
+     * Helper method to delete the folder after test
+     *
+     * @param folder target folder
+     */
+    public static void deleteFolder(File folder) {
+        File[] files = folder.listFiles();
+        if (files != null) { //some JVMs return null for empty dirs
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteFolder(f);
+                } else {
+                    f.delete();
+                }
+            }
+        }
+        folder.delete();
+    }
 
     @Test
     /**
@@ -75,7 +93,7 @@ public class DependencyResolverTest {
      */
     public void testSpringBootTransitiveDependencies() throws ArtifactResolveException {
         Artifact springBoot = new Artifact("org.springframework.boot", "spring-boot-starter-web", "2.2.6.RELEASE");
-        verifyArtifactDependencyAmount(springBoot, "src/test/java/resources/SpringBootTest.txt");
+        verifyArtifactDependencies(springBoot, "src/test/java/resources/SpringBootTransitiveDeps.txt");
     }
 
     @Test
@@ -84,7 +102,7 @@ public class DependencyResolverTest {
      */
     public void testGoogleGuavaTransitiveDependencies() throws ArtifactResolveException {
         Artifact guava = new Artifact("com.google.guava", "guava", "31.0.1-jre");
-        verifyArtifactDependencyAmount(guava, "src/test/java/resources/Guava.txt");
+        verifyArtifactDependencies(guava, "src/test/java/resources/GuavaTransitiveDeps.txt");
     }
 
     @Test
@@ -93,7 +111,7 @@ public class DependencyResolverTest {
      */
     public void testTomcatEmbedWebsocketTransitiveDependencies() throws ArtifactResolveException {
         Artifact websocket = new Artifact("org.apache.tomcat.embed", "tomcat-embed-websocket", "10.1.0-M8");
-        verifyArtifactDependencyAmount(websocket, "src/test/java/resources/Websocket.txt");
+        verifyArtifactDependencies(websocket, "src/test/java/resources/WebsocketTransitiveDeps.txt");
     }
 
     @Test
@@ -102,7 +120,7 @@ public class DependencyResolverTest {
      */
     public void testSpringBootStarterTransitiveDependencies() throws ArtifactResolveException {
         Artifact springBootStarter = new Artifact("org.springframework.boot", "spring-boot-starter", "2.2.6.RELEASE");
-        verifyArtifactDependencyAmount(springBootStarter, "src/test/java/resources/SpringBootStarter.txt");
+        verifyArtifactDependencies(springBootStarter, "src/test/java/resources/SpringBootStarterTransitiveDeps.txt");
     }
 
     @Test
@@ -111,7 +129,7 @@ public class DependencyResolverTest {
      */
     public void testMockitoTransitiveDependencies() throws ArtifactResolveException {
         Artifact mockito = new Artifact("org.mockito", "mockito-core", "4.2.0");
-        verifyArtifactDependencyAmount(mockito, "src/test/java/resources/Mockito.txt");
+        verifyArtifactDependencies(mockito, "src/test/java/resources/MockitoTransitiveDeps.txt");
     }
 
     @Test
@@ -120,7 +138,7 @@ public class DependencyResolverTest {
      */
     public void testJacksonTransitiveDependencies() throws ArtifactResolveException {
         Artifact jackson = new Artifact("com.fasterxml.jackson.core", "jackson-databind", "2.13.0");
-        verifyArtifactDependencyAmount(jackson, "src/test/java/resources/Jackson.txt");
+        verifyArtifactDependencies(jackson, "src/test/java/resources/JacksonTransitiveDeps.txt");
     }
 
     /**
@@ -130,86 +148,62 @@ public class DependencyResolverTest {
      * @param filename Target test file.
      * @throws ArtifactResolveException Throw an exception if it fails to resolve the dependencies.
      */
-    private void verifyArtifactDependencyAmount(Artifact artifact, String filename) throws ArtifactResolveException {
+    private void verifyArtifactDependencies(Artifact artifact, String filename) throws ArtifactResolveException {
+
         // Collect transitive hull
         List<Artifact> dependencies = DependencyResolver.resolveArtifact(artifact, TESTING_TEMP_DIR);
 
-        // Verify the dependencies of target Artifact are correct
+        // Verify the collected dependencies match the expected set (imported from text file)
         Set<Artifact> expected = readTestFile(filename);
-        boolean res = true;
+
+        // Verify amount
+        assertTrue(dependencies.size() == expected.size());
+
+        // Verify exact match, every retrieved artefact must be in list of expected artefacts
         for (Artifact dependency : dependencies) {
-            if(!expected.contains(dependency) || !dependency.equals(Util.getFromSet(expected, dependency))){
-                Logger.error("Incorrect Artifact! Expected: " + Util.getFromSet(expected, dependency) + ". Actually: " + dependency);
-                res = false;
-            }
+            assertTrue(expected.contains(dependency));
         }
 
         // Delete the test download folder
         File folder = new File(TESTING_TEMP_DIR);
         deleteFolder(folder);
-
-        // Verify amount of dependencies in target folder
-        if(dependencies.size() != expected.size()) res = false;
-        assertEquals(res, true);
     }
 
     /**
-     * This helper method will read the dependencies provided by MVN and generate a list of Artifact object.
-     * @param filename The name of the text file.
-     * @return  Expected dependency list.
+     * This helper method will read the dependencies provided by MVN and generate a list of Artifact object. Files with
+     * expected dependency sets can be used to verify the correct transitive hull constructed for test artefacts.
+     *
+     * @param transitiveDependencyFile The name of the text file, listing the expected transitive maven dependencies
+     * @return Expected dependency list as a set of artefacts
      */
-    public Set<Artifact> readTestFile(String filename) {
+    public Set<Artifact> readTestFile(String transitiveDependencyFile) {
         Set<Artifact> expected = new HashSet<>();
-        try {
-            FileInputStream stream = new FileInputStream(filename);
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-            String strLine;
-            boolean firstLine = true;
-            //Read File Line By Line
-            while ((strLine = br.readLine()) != null) {
-                Artifact artifact = parseArtifact(strLine, firstLine);
-                expected.add(artifact);
-                firstLine = false;
+        try (BufferedReader br = new BufferedReader(new FileReader(transitiveDependencyFile))) {
+            for (String stringifiedMavenArefact; (stringifiedMavenArefact = br.readLine()) != null; ) {
+                expected.add(parseArtifact(stringifiedMavenArefact));
             }
-            stream.close();
         } catch (IOException e) {
-            Logger.error(e.getMessage());
+            throw new RuntimeException("Error reading in file content of " + transitiveDependencyFile + "\n" + e.getMessage());
         }
         return expected;
     }
 
     /**
-     * This helper method will parse one line of the dependency list.
-     * @param strLine target line.
-     * @param firstLine a button indicating if this is the first line.
+     * This helper method will parse one string-encoded line representing an artifact (with groupid and version) into an
+     * artifact object.
+     *
+     * @param strLine target line. Must be of syntax: "[group.id]:[artifact.id]:[scope]:[version]"
      * @return return a parsed Artifact object.
      */
-    private Artifact parseArtifact(String strLine, boolean firstLine) {
+    private Artifact parseArtifact(String strLine) {
+
         // In case that curr line is the first line
-        int startIndex = firstLine ?  strLine.indexOf("]") + 1 : strLine.indexOf("-") + 1;
-        String[] substrings = strLine.substring(startIndex).trim().split(":");
+        String[] substrings = strLine.split(":");
         String groupId = substrings[0];
         String artifactId = substrings[1];
         String version = substrings[3];
-        return new Artifact(groupId, artifactId, version);
-    }
 
-    /**
-     * Helper method to delete the folder after test
-     *
-     * @param folder target folder
-     */
-    public static void deleteFolder(File folder) {
-        File[] files = folder.listFiles();
-        if (files != null) { //some JVMs return null for empty dirs
-            for (File f : files) {
-                if (f.isDirectory()) {
-                    deleteFolder(f);
-                } else {
-                    f.delete();
-                }
-            }
-        }
-        folder.delete();
+        // Create Artifact version based on groupId, version, artifactId
+        return new Artifact(groupId, artifactId, version);
     }
 }
