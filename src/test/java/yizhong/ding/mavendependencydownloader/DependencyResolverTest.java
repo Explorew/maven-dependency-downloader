@@ -1,13 +1,11 @@
 package yizhong.ding.mavendependencydownloader;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -73,7 +71,7 @@ public class DependencyResolverTest {
      */
     public void testSpringBootTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact springBoot = new Artifact("org.springframework.boot", "spring-boot-starter-web", "2.2.6.RELEASE");
-        verifyArtifactDependencies(springBoot, "src/test/java/resources/SpringBootTransitiveDeps.txt");
+        verifyArtifactDependencies(springBoot, "SpringBootTransitiveDeps.txt");
     }
 
     @Test
@@ -82,7 +80,7 @@ public class DependencyResolverTest {
      */
     public void testGoogleGuavaTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact guava = new Artifact("com.google.guava", "guava", "31.0.1-jre");
-        verifyArtifactDependencies(guava, "src/test/java/resources/GuavaTransitiveDeps.txt");
+        verifyArtifactDependencies(guava, "GuavaTransitiveDeps.txt");
     }
 
     @Test
@@ -91,7 +89,7 @@ public class DependencyResolverTest {
      */
     public void testTomcatEmbedWebsocketTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact websocket = new Artifact("org.apache.tomcat.embed", "tomcat-embed-websocket", "10.1.0-M8");
-        verifyArtifactDependencies(websocket, "src/test/java/resources/WebsocketTransitiveDeps.txt");
+        verifyArtifactDependencies(websocket, "WebsocketTransitiveDeps.txt");
     }
 
     @Test
@@ -100,7 +98,7 @@ public class DependencyResolverTest {
      */
     public void testSpringBootStarterTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact springBootStarter = new Artifact("org.springframework.boot", "spring-boot-starter", "2.2.6.RELEASE");
-        verifyArtifactDependencies(springBootStarter, "src/test/java/resources/SpringBootStarterTransitiveDeps.txt");
+        verifyArtifactDependencies(springBootStarter, "SpringBootStarterTransitiveDeps.txt");
     }
 
     @Test
@@ -109,7 +107,7 @@ public class DependencyResolverTest {
      */
     public void testMockitoTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact mockito = new Artifact("org.mockito", "mockito-core", "4.2.0");
-        verifyArtifactDependencies(mockito, "src/test/java/resources/MockitoTransitiveDeps.txt");
+        verifyArtifactDependencies(mockito, "MockitoTransitiveDeps.txt");
     }
 
     @Test
@@ -118,14 +116,14 @@ public class DependencyResolverTest {
      */
     public void testJacksonTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact jackson = new Artifact("com.fasterxml.jackson.core", "jackson-databind", "2.13.0");
-        verifyArtifactDependencies(jackson, "src/test/java/resources/JacksonTransitiveDeps.txt");
+        verifyArtifactDependencies(jackson, "JacksonTransitiveDeps.txt");
     }
 
     /**
      * Helper method to verify if the transitive artifacts collected for a given artifact are expected.
      *
      * @param artifact As an input artifact for which we want to collect all transitive dependencies.
-     * @param filename Target test file.
+     * @param filename Target test file (must reside test/java/resources)
      * @throws ArtifactResolveException Throw an exception if it fails to resolve the dependencies.
      */
     private void verifyArtifactDependencies(Artifact artifact, String filename) throws ArtifactResolveException, IOException {
@@ -152,18 +150,24 @@ public class DependencyResolverTest {
      * This helper method will read the dependencies provided by MVN and generate a list of Artifact object. Files with
      * expected dependency sets can be used to verify the correct transitive hull constructed for test artefacts.
      *
-     * @param transitiveDependencyFile The name of the text file, listing the expected transitive maven dependencies
+     * @param transitiveDependencyFileName The name of the text file, listing the expected transitive maven
+     *                                     dependencies
      * @return Expected dependency list as a set of artefacts
      */
-    public Set<Artifact> readTestFile(String transitiveDependencyFile) {
+    public Set<Artifact> readTestFile(String transitiveDependencyFileName) throws IOException {
         Set<Artifact> expected = new HashSet<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(transitiveDependencyFile))) {
-            for (String stringifiedMavenArefact; (stringifiedMavenArefact = br.readLine()) != null; ) {
-                expected.add(parseArtifact(stringifiedMavenArefact));
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading in file content of " + transitiveDependencyFile + "\n" + e.getMessage());
+
+        // resolve filename to location in test resource folder:
+        String[] allDependencies = IOUtils.toString(
+                // Note: Usage of slash here instead of File.pathseparator is intentional. The commons IO knows how to handle it.
+                this.getClass().getResourceAsStream("/" + transitiveDependencyFileName),
+                "UTF-8").split(System.getProperty("line.separator"));
+
+        for (String dependency : allDependencies) {
+            expected.add(parseArtifact(dependency));
         }
+
+        // Return set with all artifacts extracted of file.
         return expected;
     }
 
