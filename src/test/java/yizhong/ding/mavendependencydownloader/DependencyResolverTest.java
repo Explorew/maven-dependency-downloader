@@ -1,7 +1,7 @@
 package yizhong.ding.mavendependencydownloader;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.pmw.tinylog.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,40 +15,20 @@ import static org.junit.Assert.assertTrue;
 
 public class DependencyResolverTest {
 
-    private final String TESTING_TEMP_DIR = "./test";
-
-    /**
-     * Helper method to delete the folder after test
-     *
-     * @param folder target folder
-     */
-    public static void deleteFolder(File folder) {
-        File[] files = folder.listFiles();
-        if (files != null) { //some JVMs return null for empty dirs
-            for (File f : files) {
-                if (f.isDirectory()) {
-                    deleteFolder(f);
-                } else {
-                    f.delete();
-                }
-            }
-        }
-        folder.delete();
-    }
+    private final String TESTING_TEMP_DIR = "test";
 
     @Test
     /**
      * Test for downloading the dependency of junit
      */
-    public void testResolveDependencies() throws ArtifactResolveException {
+    public void testResolveDependencies() throws ArtifactResolveException, IOException {
         Artifact target = new Artifact("junit", "junit", "4.13.2");
         List<Artifact> list = new ArrayList<>();
         list.add(new Artifact("junit", "junit", "4.13.2"));
         list.add(new Artifact("org.hamcrest", "hamcrest-core", "1.3"));
-        assertEquals(list, DependencyResolver.resolveDependencies(target, "./temp"));
-        assertEquals(list, DependencyResolver.resolveArtifact("junit", "junit", "4.13.2", "./temp"));
-        File folder = new File("./temp");
-        folder.delete();
+        assertEquals(list, DependencyResolver.resolveDependencies(target, TESTING_TEMP_DIR));
+        assertEquals(list, DependencyResolver.resolveArtifact("junit", "junit", "4.13.2", TESTING_TEMP_DIR));
+        FileUtils.deleteDirectory(new File(TESTING_TEMP_DIR));
     }
 
     @Test
@@ -91,7 +71,7 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency list of spring boot starter web matches the expected list.
      */
-    public void testSpringBootTransitiveDependencies() throws ArtifactResolveException {
+    public void testSpringBootTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact springBoot = new Artifact("org.springframework.boot", "spring-boot-starter-web", "2.2.6.RELEASE");
         verifyArtifactDependencies(springBoot, "src/test/java/resources/SpringBootTransitiveDeps.txt");
     }
@@ -100,7 +80,7 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency list of guava matches the expected list.
      */
-    public void testGoogleGuavaTransitiveDependencies() throws ArtifactResolveException {
+    public void testGoogleGuavaTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact guava = new Artifact("com.google.guava", "guava", "31.0.1-jre");
         verifyArtifactDependencies(guava, "src/test/java/resources/GuavaTransitiveDeps.txt");
     }
@@ -109,7 +89,7 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency list of Tomcat Embed Websocket matches the expected list.
      */
-    public void testTomcatEmbedWebsocketTransitiveDependencies() throws ArtifactResolveException {
+    public void testTomcatEmbedWebsocketTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact websocket = new Artifact("org.apache.tomcat.embed", "tomcat-embed-websocket", "10.1.0-M8");
         verifyArtifactDependencies(websocket, "src/test/java/resources/WebsocketTransitiveDeps.txt");
     }
@@ -118,7 +98,7 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency list of Spring Boot Starter matches the expected list.
      */
-    public void testSpringBootStarterTransitiveDependencies() throws ArtifactResolveException {
+    public void testSpringBootStarterTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact springBootStarter = new Artifact("org.springframework.boot", "spring-boot-starter", "2.2.6.RELEASE");
         verifyArtifactDependencies(springBootStarter, "src/test/java/resources/SpringBootStarterTransitiveDeps.txt");
     }
@@ -127,7 +107,7 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency list of Mockito matches the expected list.
      */
-    public void testMockitoTransitiveDependencies() throws ArtifactResolveException {
+    public void testMockitoTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact mockito = new Artifact("org.mockito", "mockito-core", "4.2.0");
         verifyArtifactDependencies(mockito, "src/test/java/resources/MockitoTransitiveDeps.txt");
     }
@@ -136,7 +116,7 @@ public class DependencyResolverTest {
     /**
      * Test if the resolved transitive dependency list of Jackson matches the expected list.
      */
-    public void testJacksonTransitiveDependencies() throws ArtifactResolveException {
+    public void testJacksonTransitiveDependencies() throws ArtifactResolveException, IOException {
         Artifact jackson = new Artifact("com.fasterxml.jackson.core", "jackson-databind", "2.13.0");
         verifyArtifactDependencies(jackson, "src/test/java/resources/JacksonTransitiveDeps.txt");
     }
@@ -148,7 +128,7 @@ public class DependencyResolverTest {
      * @param filename Target test file.
      * @throws ArtifactResolveException Throw an exception if it fails to resolve the dependencies.
      */
-    private void verifyArtifactDependencies(Artifact artifact, String filename) throws ArtifactResolveException {
+    private void verifyArtifactDependencies(Artifact artifact, String filename) throws ArtifactResolveException, IOException {
 
         // Collect transitive hull
         List<Artifact> dependencies = DependencyResolver.resolveArtifact(artifact, TESTING_TEMP_DIR);
@@ -165,8 +145,7 @@ public class DependencyResolverTest {
         }
 
         // Delete the test download folder
-        File folder = new File(TESTING_TEMP_DIR);
-        deleteFolder(folder);
+        FileUtils.deleteDirectory(new File(TESTING_TEMP_DIR));
     }
 
     /**
