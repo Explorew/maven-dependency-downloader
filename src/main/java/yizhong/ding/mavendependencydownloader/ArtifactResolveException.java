@@ -1,13 +1,16 @@
 package yizhong.ding.mavendependencydownloader;
 
+/**
+ * Custom exception that can be thrown if anything goes wrong during artifact resolving.
+ */
 public class ArtifactResolveException extends Exception {
+
     /**
-     * Custom exception that can be thrown if anything goes wrong during artifact resolving.
-     * @param cause reason for exception
-     * @author Yizhong Ding
+     * Constructor for ArtifactResolveExcption. Invoces parent class (Exception).
+     *
+     * @param cause reason for raised exception.
      */
-    public ArtifactResolveException(String cause)
-    {
+    public ArtifactResolveException(String cause) {
         super(cause);
     }
 }
