@@ -140,7 +140,8 @@ public class DependencyResolverTest {
 
         // Verify exact match, every retrieved artefact must be in list of expected artefacts
         for (Artifact dependency : dependencies) {
-            assertTrue("Unit test downloaded " + dependency + ", but this artifact does not match an entry in the expected list.", expected.contains(dependency));
+            Artifact actual = Util.getFromSet(expected, dependency);
+            assertTrue("Unit test downloaded " + dependency + ", but this artifact: " + actual + " does not match an entry in the expected list.", dependency.isSame(actual));
         }
 
         // Delete the test download folder

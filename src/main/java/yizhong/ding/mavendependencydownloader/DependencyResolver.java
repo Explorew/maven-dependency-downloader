@@ -135,6 +135,10 @@ public class DependencyResolver {
             // Fetch dependencies list of curr artifact and add them in the help queue.
             List<Artifact> dependencies = DependencyParser.fetchDependencies(queueHead);
             queue.addAll(dependencies);
+
+            //TODO: need to be deleted
+            Logger.error("Curr Artifact: " + queueHead);
+            Logger.error("dependencies: " + dependencies.toString() + "\n");
         }
         catch(Error error){
             throw new ArtifactResolveException(error.getMessage());

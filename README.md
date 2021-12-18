@@ -67,5 +67,8 @@ Documentation
 
  * [Please consult the JavaDoc for method details.](https://explorew.github.io/maven-dependency-downloader/)
 
-Author / Copyright
-----
+Notice
+----- 
+The Equals method of Artifact Class only check if groupId and artifactId are equal.
+Because maven does not pull the same artifact twice. If already collected (in a different version) it should
+be considered covered, and not get re-downloaded.

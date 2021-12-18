@@ -106,7 +106,7 @@ public class Artifact {
     public void setExclusions(List<Artifact> exclusions) { this.exclusions = exclusions; }
 
     /**
-     * Equals methods compares the value of two Artifacts.
+     * Equals method compares the value of two Artifacts.
      *  Note: The override equals method only checks if values of groupId
      *  and artifactId of two Artifacts are equal.
      *  Motivation: Maven does not pull the same artifact twice. If already collected (in a different version) it should be considered covered, and not get re-downloaded.
@@ -118,6 +118,15 @@ public class Artifact {
         Artifact artifact = (Artifact) o;
         return Objects.equals(groupId, artifact.groupId) &&
                 Objects.equals(artifactId, artifact.artifactId);
+    }
+
+    /**
+     * This method compares if the value of two Artifacts are exactly same.
+     */
+    public boolean isSame(Artifact target) {
+        return this.artifactId.equals(target.getArtifactId())
+                && this.groupId.equals(target.getGroupId())
+                && this.version.equals(target.getVersion());
     }
 
     /**
