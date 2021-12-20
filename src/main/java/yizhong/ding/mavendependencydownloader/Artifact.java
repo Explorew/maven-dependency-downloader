@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * The Artifact class represents the logical artifact coordinates of maven artifact.
- *  It contains the coordinates (groupId, artifactId, and version) of an artifact.
+ * The Artifact class represents the logical artifact coordinates of maven artifact. It contains the coordinates
+ * (groupId, artifactId, and version) of an artifact.
+ *
  * @author Yizhong Ding
  */
 public class Artifact {
@@ -18,9 +19,10 @@ public class Artifact {
 
     /**
      * Constructor of Artifact class taking an Artifact coordinates as parameters.
-     * @param groupId the group id of the Artifact
+     *
+     * @param groupId    the group id of the Artifact
      * @param artifactId the artifact id of the Artifact
-     * @param version the version of the Artifact
+     * @param version    the version of the Artifact
      */
     public Artifact(String groupId, String artifactId, String version) {
         this.groupId = groupId;
@@ -31,6 +33,7 @@ public class Artifact {
 
     /**
      * Getter for group id
+     *
      * @return returns the group id of this Artifact
      */
     public String getGroupId() {
@@ -38,37 +41,8 @@ public class Artifact {
     }
 
     /**
-     * Getter for artifact id
-     * @return returns the artifact id of this Artifact
-     */
-    public String getArtifactId() {
-        return artifactId;
-    }
-
-    /**
-     * Getter for version
-     * @return returns the version string of this Artifact
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * Getter for dependencies
-     * @return returns the dependencies (a List of Artifacts) of this Artifact
-     */
-    public List<Artifact> getDependencies() {
-        return dependencies;
-    }
-
-    /**
-     * Getter for exclusions
-     * @return returns the exclusions (a List of Artifacts) of this Artifact
-     */
-    public List<Artifact> getExclusions() { return exclusions; }
-
-    /**
      * Setter for group id
+     *
      * @param groupId new group id
      */
     public void setGroupId(String groupId) {
@@ -76,7 +50,17 @@ public class Artifact {
     }
 
     /**
+     * Getter for artifact id
+     *
+     * @return returns the artifact id of this Artifact
+     */
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    /**
      * Setter for artifactId
+     *
      * @param artifactId new artifact id
      */
     public void setArtifactId(String artifactId) {
@@ -84,7 +68,17 @@ public class Artifact {
     }
 
     /**
+     * Getter for version
+     *
+     * @return returns the version string of this Artifact
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
      * Setter for version
+     *
      * @param version new version string
      */
     public void setVersion(String version) {
@@ -92,7 +86,17 @@ public class Artifact {
     }
 
     /**
+     * Getter for dependencies
+     *
+     * @return returns the dependencies (a List of Artifacts) of this Artifact
+     */
+    public List<Artifact> getDependencies() {
+        return dependencies;
+    }
+
+    /**
      * Setter for dependencies
+     *
      * @param dependencies new dependencies List
      */
     public void setDependencies(List<Artifact> dependencies) {
@@ -100,16 +104,27 @@ public class Artifact {
     }
 
     /**
-     * Setter for exclusions
-     * @param exclusions new exclusions List
+     * Getter for exclusions
+     *
+     * @return returns the exclusions (a List of Artifacts) of this Artifact
      */
-    public void setExclusions(List<Artifact> exclusions) { this.exclusions = exclusions; }
+    public List<Artifact> getExclusions() {
+        return exclusions;
+    }
 
     /**
-     * Equals method compares the value of two Artifacts.
-     *  Note: The override equals method only checks if values of groupId
-     *  and artifactId of two Artifacts are equal.
-     *  Motivation: Maven does not pull the same artifact twice. If already collected (in a different version) it should be considered covered, and not get re-downloaded.
+     * Setter for exclusions
+     *
+     * @param exclusions new exclusions List
+     */
+    public void setExclusions(List<Artifact> exclusions) {
+        this.exclusions = exclusions;
+    }
+
+    /**
+     * Equals method compares the value of two Artifacts. Note: The override equals method only checks if values of
+     * groupId and artifactId of two Artifacts are equal. Motivation: Maven does not pull the same artifact twice. If
+     * already collected (in a different version) it should be considered covered, and not get re-downloaded.
      */
     @Override
     public boolean equals(Object o) {
@@ -121,7 +136,9 @@ public class Artifact {
     }
 
     /**
-     * This method compares if the value of two Artifacts are exactly same.
+     * This method compares if the value of two Artifacts are exactly same. This provides a more advanced comparison
+     * than the equals method, since this method also checks the artifact version (usually not a criteria for artifact
+     * comparison).
      */
     public boolean isSame(Artifact target) {
         return this.artifactId.equals(target.getArtifactId())
@@ -138,8 +155,7 @@ public class Artifact {
     }
 
     /**
-     * Override toString method.
-     *  Output string would join groupId, artifactId, and version with ":" sign.
+     * Override toString method. Output string would join groupId, artifactId, and version with ":" sign.
      */
     @Override
     public String toString() {

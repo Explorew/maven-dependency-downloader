@@ -141,6 +141,8 @@ public class DependencyResolverTest {
         // Verify exact match, every retrieved artefact must be in list of expected artefacts
         for (Artifact dependency : dependencies) {
             Artifact actual = Util.getFromSet(expected, dependency);
+
+            // This match also checks the artifact version (there for "isSame" is used instead of "equals").
             assertTrue("Unit test downloaded " + dependency + ", but this artifact: " + actual + " does not match an entry in the expected list.", dependency.isSame(actual));
         }
 
