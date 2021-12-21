@@ -5,6 +5,7 @@ Maven Dependency Downloader
 ![version](https://img.shields.io/badge/version-1.1.2-brightgreen)
 ![coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)
 ![building](https://img.shields.io/badge/build-passing-brightgreen)
+![testinging](https://img.shields.io/badge/testing-failing-red)
 ![okhttp3](https://img.shields.io/badge/OkHttp3-4.9.1-blue)
 ![tinylog](https://img.shields.io/badge/TinyLog-1.3.6-blue)
 ![jdom](https://img.shields.io/badge/JDom-2.0.2-blue)
@@ -28,35 +29,44 @@ Make sure Java (version 8 and higher) is installed on your machine.
 
 Build Instructions 
 ----- 
-Move to the project directory.
+
+Run the following command from the this project's root directory to build a self contained jar:
  
-Build a self-contained jar for this library:
+```bash
+mvn clean install
+```
 
-      $ mvn clean package
-
-To inject into your local maven repository (```~/.m2```):
-
-      $ mvn install:install-file -Dfile=target/MavenDependencyDownloader.jar -DgroupId=yizhong.ding -DartifactId=maven-dependency-downloader -Dversion=1.1.2 -Dpackaging=jar -DcreateChecksum=true
+ > Note: Using ```install``` instead of ```package``` creates an artifact entry in your local maven repository at ```~/.m2```.
 
 Usage
 -----
 
  * [Build this library](#quick-start) 
- * Add the library to your classpath
- * Call this library from your program:  
- 
+ * Add the library to your classpath.  
+Either:
+   * Use the self-contained JAR in ```target/MavenDependencyDownloader.jar```
+   * Add the following dependency block to your project's ```pom.xml```:
+```xml
+<dependency>
+    <groupId>yizhong.ding</groupId>
+    <artifactId>mavendependencydownloader</artifactId>
+    <version>1.1.2</version>
+</dependency>
+```
+ * Invoke this library from your program:
+
 ```java
-// Artifact for which we want to collect all dependencies:
-String groupId = "eu.kartoffelquadrat";
-String artifactId = "asyncrestlib";
-String version = "1.6.2";
-
-// Where to store the dependencies (as JARs)
-// tmpdir will be used if null or empty
-String targetLocation = "/Users/schieder/Desktop/myDependencies";
-
-// Call library to collect all dependencies
-DependencyResolver.resolveArtifact(groupId, artifactId, version, targetLocation);
+    // Artifact for which we want to collect all dependencies:
+    String groupId = "eu.kartoffelquadrat";
+    String artifactId = "asyncrestlib";
+    String version = "1.6.2";
+    
+    // Where to store the dependencies (as JARs)
+    // OS tmpdir will be used if targetLocation is null or empty
+    String targetLocation = "/Users/schieder/Desktop/myDependencies";
+    
+    // Call library to collect all dependencies
+    DependencyResolver.resolveArtifact(groupId, artifactId, version, targetLocation);
 ```
 
  > Check out the minimal [demo project](https://github.com/kartoffelquadrat/MavenDependencyDownloaderDemo).
