@@ -2,7 +2,6 @@ package yizhong.ding.mavendependencydownloader;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.verify;
 
 import java.io.*;
 import java.io.ByteArrayOutputStream;
