@@ -69,7 +69,7 @@ public class DependencyResolver {
      * @return Returns a list of successfully downloaded artifacts.
      * @throws ArtifactResolveException if fail to resolve dependencies.
      */
-    public static List<Artifact> resolveDependencies(Artifact target, String downloadPath) throws ArtifactResolveException{
+    public static List<Artifact> resolveDependencies(Artifact target, String downloadPath) throws ArtifactResolveException {
         ensureTargetDirectoryExists(downloadPath);
         Set<Artifact> downloaded = new HashSet<>();
         Set<Artifact> excludedDependencies = new HashSet<>();
@@ -78,8 +78,10 @@ public class DependencyResolver {
         queue.add(target);
         // In each iteration, removes the first node, and appends all the transitive dependencies to the queue.
         while(!queue.isEmpty()){
-            traverseDependencyNode(downloaded, queue, downloadPath, excludedDependencies);
+            traverseDependencyNode(downloaded, queue, excludedDependencies);
         }
+        // Update version numbers from central POM file (if it exists)
+        downloaded = updateVersionFromCentralPOM(target, downloaded);
         // Remove exclusions from the download set and replace the artifact in exclusion set for deleting
         for (Artifact artifact : excludedDependencies) {
             if(downloaded.contains(artifact)){
@@ -89,14 +91,29 @@ public class DependencyResolver {
         downloaded.removeAll(excludedDependencies);
         StringBuilder res = new StringBuilder("Successfully downloaded: \n");
         for (Artifact artifact: downloaded) {
+            try{
+                download(artifact, downloadPath);
+            }
+            catch (IOException error){
+                throw new ArtifactResolveException(error.getMessage());
+            }
             res.append("\t" + artifact.getArtifactId() + " " + artifact.getVersion() + " " + artifact.getGroupId() + "\n");
         }
         Logger.info(res);
-        // Remove the artifact whi
-        for (Artifact artifact: deleteSet) {
-            removeExclusion(artifact, downloadPath);
-        }
         return new ArrayList<>(downloaded);
+    }
+
+    /**
+     * Helper method that updates dependency versions from a central POM file.
+     *
+     * @param target target artifact
+     * @param downloaded dependency set
+     * @return a new set of dependencies containing updated versions
+     */
+    private static Set<Artifact> updateVersionFromCentralPOM(Artifact target, Set<Artifact> downloaded) {
+        Artifact centralArtifact = Util.getCentralArtifact(target);
+        if(centralArtifact == null) return downloaded;
+        return DependencyParser.getUpdatedDependencies(target, downloaded);
     }
 
     /**
@@ -104,11 +121,10 @@ public class DependencyResolver {
 
      * @param downloaded downloaded a set of successfully downloaded Artifacts
      * @param queue queue used for BFS traverse the dependency graph
-     * @param downloadPath downloadPath path to store Jar files
      * @param excludedDependencies the set used to
      * @throws ArtifactResolveException if fail to resolve dependency
      */
-    public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, String downloadPath, Set<Artifact> excludedDependencies) throws ArtifactResolveException {
+    public static void traverseDependencyNode(Set<Artifact> downloaded, Queue<Artifact> queue, Set<Artifact> excludedDependencies) throws ArtifactResolveException {
         Artifact queueHead = queue.poll();
         if(downloaded.contains(queueHead)) { // avoid cycle in the dependency graph and update version
             downloaded.remove(queueHead);
@@ -123,22 +139,12 @@ public class DependencyResolver {
                 if(!queue.contains(artifact) && !downloaded.contains(artifact)) excludedDependencies.add(artifact);
             }
         }
-        try{
-            // Download the visited artifact and add it in the set.
-            download(queueHead, downloadPath);
-            downloaded.add(queueHead);
-        }
-        catch (IOException e){
-            throw new ArtifactResolveException("Error: failed to download " + queueHead.toString() + ". " + e.getMessage());
-        }
+        // add the visited artifact into the set.
+        downloaded.add(queueHead);
         try{
             // Fetch dependencies list of curr artifact and add them in the help queue.
             List<Artifact> dependencies = DependencyParser.fetchDependencies(queueHead);
             queue.addAll(dependencies);
-
-            //TODO: need to be deleted
-            Logger.error("Curr Artifact: " + queueHead);
-            Logger.error("dependencies: " + dependencies.toString() + "\n");
         }
         catch(Error error){
             throw new ArtifactResolveException(error.getMessage());
@@ -190,4 +196,4 @@ public class DependencyResolver {
             throw new ArtifactResolveException("Error: Failed to delete exclusion (" + artifact + ").");
         }
     }
-    }
+}

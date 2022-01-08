@@ -137,8 +137,10 @@ public class Artifact {
 
     /**
      * This method compares if the value of two Artifacts are exactly same. This provides a more advanced comparison
-     * than the equals method, since this method also checks the artifact version (usually not a criteria for artifact
-     * comparison).
+     *      than the equals method, since this method also checks the artifact version (usually not a criteria for artifact
+     *      comparison).
+     * @param target target artifact to compare with.
+     * @return true if they are same artifacts.
      */
     public boolean isSame(Artifact target) {
         return this.artifactId.equals(target.getArtifactId())

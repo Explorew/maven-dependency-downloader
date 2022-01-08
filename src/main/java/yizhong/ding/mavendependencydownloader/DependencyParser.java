@@ -15,7 +15,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Plays the role of parsing a list of (direct) dependency of a given Artifact. It uses HTTP based fetcher
@@ -193,6 +195,19 @@ public class DependencyParser {
         Document doc = getDocument(parentArtifact);
         // If the dependencies are not found, return the empty list
         if (doc == null) return null;
+        return getVersionFromDoc(childGroupId, childArtifactId, ns, parentArtifact, doc);
+    }
+
+    /**
+     * Get a version string from a given document.
+     * @param childGroupId groupId for the target artifact.
+     * @param childArtifactId artifactId for the target artifact.
+     * @param ns namespace.
+     * @param parentArtifact parent artifact.
+     * @param doc a given document containing the version info.
+     * @return searched version string.
+     */
+    private static String getVersionFromDoc(String childGroupId, String childArtifactId, Namespace ns, Artifact parentArtifact, Document doc) {
         //get dependencies list
         Element rootNode = doc.getRootElement();
         // Check if the POM file contains "dependencyManagement" element
@@ -216,6 +231,26 @@ public class DependencyParser {
         //if current parent does not contain the variable, go to its parent recursively
         if(version == null || version.contains("${")) return getFromParentVersion(childGroupId, childArtifactId, rootNode, ns, version);
         return version;
+    }
+
+    /**
+     * This method updates the versions of a given dependency set by parson the central POM file.
+     * @param centralArtifact the artifact containing all version info.
+     * @param downloaded the given downloaded set.
+     * @return a updated set containing new versions.
+     */
+    public static Set<Artifact> getUpdatedDependencies(Artifact centralArtifact, Set<Artifact> downloaded){
+        Document doc = getDocument(centralArtifact);
+        Namespace ns = Namespace.getNamespace(Util.namespace());
+        Set<Artifact> updatedSet = new HashSet<>();
+        for(Artifact artifact : downloaded){
+            String updatedVersion = getVersionFromDoc(artifact.getGroupId(), artifact.getArtifactId(), ns, centralArtifact, doc);
+            if(updatedVersion != null) {
+                artifact.setVersion(updatedVersion);
+            }
+            updatedSet.add(artifact);
+        }
+        return updatedSet;
     }
 
     /**
