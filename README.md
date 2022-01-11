@@ -3,9 +3,9 @@ Maven Dependency Downloader
 ========================================= 
 
 ![version](https://img.shields.io/badge/version-1.1.2-brightgreen)
-![coverage](https://img.shields.io/badge/coverage-96%25-brightgreen)
+![coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)
 ![building](https://img.shields.io/badge/build-passing-brightgreen)
-![testinging](https://img.shields.io/badge/testing-failing-red)
+![testinging](https://img.shields.io/badge/testing-passing-brightgreen)
 ![okhttp3](https://img.shields.io/badge/OkHttp3-4.9.1-blue)
 ![tinylog](https://img.shields.io/badge/TinyLog-1.3.6-blue)
 ![jdom](https://img.shields.io/badge/JDom-2.0.2-blue)
@@ -82,3 +82,5 @@ Notice
 The Equals method of Artifact Class only check if groupId and artifactId are equal.
 Because maven does not pull the same artifact twice. If already collected (in a different version) it should
 be considered covered, and not get re-downloaded.
+
+ > Known issue: Currently the MDD can not properly handle artefacts with property controlled version overrides (with exception to spring boot, which is hard coded in [```Util.java```](src/main/java/yizhong/ding/mavendependencydownloader/Util.java)

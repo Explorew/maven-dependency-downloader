@@ -234,7 +234,7 @@ public class DependencyParser {
     }
 
     /**
-     * This method updates the versions of a given dependency set by parson the central POM file.
+     * This method updates the versions of a given dependency set by parsing the central POM file.
      * @param centralArtifact the artifact containing all version info.
      * @param downloaded the given downloaded set.
      * @return a updated set containing new versions.
