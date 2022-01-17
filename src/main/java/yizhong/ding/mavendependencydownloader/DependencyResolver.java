@@ -111,10 +111,11 @@ public class DependencyResolver {
      * @return a new set of dependencies containing updated versions
      */
     private static Set<Artifact> updateVersionFromCentralPOM(Artifact target, Set<Artifact> downloaded) {
-        Artifact centralArtifact = Util.getCentralArtifact(target);
+        Artifact centralArtifact = DependencyParser.getCentralArtifact(target);
         if(centralArtifact == null) return downloaded;
         return DependencyParser.getUpdatedDependencies(target, downloaded);
     }
+
 
     /**
      * Helper method that visits dependency Graph nodes.

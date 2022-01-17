@@ -99,17 +99,4 @@ public class Util {
         }
         return null;
     }
-
-    /**
-     * Get an Artifact containing all version info.
-     * @param target target artifact.
-     * @return the artifact containing all version info.
-     */
-    public static Artifact getCentralArtifact(Artifact target) {
-        String targetGroupId = target.getGroupId();
-        if(targetGroupId.equals("org.springframework.boot")){
-            return new Artifact(targetGroupId, "spring-boot-dependencies", target.getVersion());
-        }
-        return null;
-    }
 }

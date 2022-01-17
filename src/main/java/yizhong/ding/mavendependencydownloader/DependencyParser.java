@@ -441,4 +441,45 @@ public class DependencyParser {
                 || version.getValue().equals("${pom/version}")
                 || version.getValue().equals("${project/version}");
     }
+
+    /**
+     * Get an Artifact containing all version info.
+     * @param target target artifact.
+     * @return the artifact containing all version info.
+     */
+    public static Artifact getCentralArtifact(Artifact target) {
+        String groupId = target.getGroupId();
+        String artifactId = target.getArtifactId();
+        String version = target.getVersion();
+        // For cases like "hst-client". The artifact is "hst-client-dependencies".
+        String CentralArtifactId = artifactId + "-dependencies";
+        Artifact resultArtifact = new Artifact(groupId, CentralArtifactId, version);
+        if (artifactExists(resultArtifact)){
+            return resultArtifact;
+        }
+        // For cases like "spring-boot-starter". The artifact is "spring-boot-dependencies".
+        int indexOfDash = artifactId.indexOf('-');
+        if(indexOfDash == -1) return null;
+        indexOfDash = artifactId.indexOf('-', indexOfDash + 1);
+        if(indexOfDash == -1) return null;
+        CentralArtifactId = artifactId.substring(0, indexOfDash) + "-dependencies";
+        resultArtifact.setArtifactId(CentralArtifactId);
+        if (artifactExists(resultArtifact)){
+            return resultArtifact;
+        }
+        return null;
+    }
+
+    /**
+     * This helper method check if a given artifact exists on Maven Central Library
+     * @param resultArtifact a given artifact
+     * @return if it exists, return true
+     */
+    private static boolean artifactExists(Artifact resultArtifact) {
+        if(parseDoc(Util.getPomURL(), resultArtifact) != null) return true;
+        if(parseDocReversely(Util.getPomURL(), resultArtifact) != null) return true;
+        return false;
+    }
+
+
 }
