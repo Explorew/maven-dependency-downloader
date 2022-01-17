@@ -20,14 +20,16 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Plays the role of parsing a list of (direct) dependency of a given Artifact. It uses HTTP based fetcher
- * to retrieve a POM file and return the Dependencies lists on the POM file.
+ * Plays the role of parsing a list of (direct) dependency of a given Artifact. It uses HTTP based fetcher to retrieve a
+ * POM file and return the Dependencies lists on the POM file.
+ *
  * @author Yizhong Ding
  */
 public class DependencyParser {
 
     /**
      * This Method fetches the dependency list by parsing the POM file.
+     *
      * @param artifact The target artifact to get dependencies.
      * @return Returns a list of artifact dependencies.
      */
@@ -58,21 +60,23 @@ public class DependencyParser {
 
     /**
      * Returns a list of dependency parsed from the given POM element.
-     * @param result result dependency list
+     *
+     * @param result       result dependency list
      * @param dependencies dependencies element of the Pom file
-     * @param ns name space of the Pom file
-     * @param rootNode rootNode of the Pom file
-     * @param artifact target Artifact object
+     * @param ns           name space of the Pom file
+     * @param rootNode     rootNode of the Pom file
+     * @param artifact     target Artifact object
      */
     private static void getDependencyList(List<Artifact> result, Element dependencies, Namespace ns, Element rootNode, Artifact artifact) {
         for (Element target : dependencies.getChildren("dependency", ns)) {
-            if(target.getChild("scope", ns) != null ){
+            if (target.getChild("scope", ns) != null) {
                 String scope = target.getChild("scope", ns).getValue();
                 // If the scope of the dependency is test, just skip
-                if(scope.equals("test") || scope.equals("provided") || scope.equals("system") || scope.equals("import")) continue;
+                if (scope.equals("test") || scope.equals("provided") || scope.equals("system") || scope.equals("import"))
+                    continue;
             }
-            if(target.getChild("optional", ns) != null
-                    && target.getChild("optional", ns).getValue().equals("true")){
+            if (target.getChild("optional", ns) != null
+                    && target.getChild("optional", ns).getValue().equals("true")) {
                 continue;
             }
             String childArtifactId = target.getChild("artifactId", ns).getValue();
@@ -88,7 +92,7 @@ public class DependencyParser {
             String childVersion = parseDependencyVersion(childGroupId, childArtifactId, version, rootNode, ns, artifact);
             if (childVersion == null) continue;
             Artifact child = new Artifact(childGroupId, childArtifactId, childVersion);
-            if(target.getChild("exclusions", ns) != null){
+            if (target.getChild("exclusions", ns) != null) {
                 Element exclusions = target.getChild("exclusions", ns);
                 child.setExclusions(getExclusionsList(exclusions, ns));
             }
@@ -98,8 +102,9 @@ public class DependencyParser {
 
     /**
      * Returns a list of exclusion artifact parsed from the given POM element.
+     *
      * @param exclusions target element.
-     * @param ns namespace.
+     * @param ns         namespace.
      * @return return a exclusion list.
      */
     private static List<Artifact> getExclusionsList(Element exclusions, Namespace ns) {
@@ -118,12 +123,13 @@ public class DependencyParser {
 
     /**
      * This is a helper function to parse the version of a dependency in the Pom file
-     * @param childGroupId group id of a dependency
+     *
+     * @param childGroupId    group id of a dependency
      * @param childArtifactId artifact id of a dependency
-     * @param version version of a dependency
-     * @param ns name space of the Pom file
-     * @param rootNode rootNode of the Pom file
-     * @param artifact target Artifact object
+     * @param version         version of a dependency
+     * @param ns              name space of the Pom file
+     * @param rootNode        rootNode of the Pom file
+     * @param artifact        target Artifact object
      * @return returns the version of a given dependency. returns null if it does not exists.
      */
     private static String parseDependencyVersion(String childGroupId, String childArtifactId, Element version, Element rootNode, Namespace ns, Artifact artifact) {
@@ -160,18 +166,20 @@ public class DependencyParser {
 
     /**
      * This is a helper function to get the non-specified version.
-     * @param childGroupId child groupId.
+     *
+     * @param childGroupId    child groupId.
      * @param childArtifactId child artifactId.
-     * @param version version.
-     * @param rootNode rootNode.
-     * @param ns namespace.
+     * @param version         version.
+     * @param rootNode        rootNode.
+     * @param ns              namespace.
      * @return return the version.
      */
     private static String getNonSpecifiedVersion(String childGroupId, String childArtifactId, Element version, Element rootNode, Namespace ns) {
         String childVersion;
         childVersion = searchPropertyVersion(rootNode, version.getValue(), ns);
         // If the variable is not specified in curr pom file, find the version variable in its parents recursively
-        if (childVersion == null) childVersion = getFromParentVersion(childGroupId, childArtifactId, rootNode, ns, childVersion);
+        if (childVersion == null)
+            childVersion = getFromParentVersion(childGroupId, childArtifactId, rootNode, ns, childVersion);
         // If version is not specified, then search available version online.
         // Eg: https://search.maven.org/classic/remotecontent?filepath=net/bytebuddy/byte-buddy-agent/1.11.21/byte-buddy-agent-1.11.21.pom
         if (childVersion == null) childVersion = searchOnlineVersion(childGroupId, childArtifactId);
@@ -181,16 +189,17 @@ public class DependencyParser {
 
     /**
      * This method will fetch the dependency version by parsing parent's Pom file.
-     * @param childGroupId target groupId.
+     *
+     * @param childGroupId    target groupId.
      * @param childArtifactId target artifactId.
-     * @param childRootNode the root node of the Pom file.
-     * @param ns namespace.
+     * @param childRootNode   the root node of the Pom file.
+     * @param ns              namespace.
      * @return returns the version. If it does not exist, return null.
      */
     private static String getFromParentVersion(String childGroupId, String childArtifactId, Element childRootNode, Namespace ns, String currVersion) {
         Element parent = childRootNode.getChild("parent", ns);
         // Base case of the recursion. If there's no parent, just return null
-        if(parent == null) return null;
+        if (parent == null) return null;
         Artifact parentArtifact = createArtifact(ns, parent);
         Document doc = getDocument(parentArtifact);
         // If the dependencies are not found, return the empty list
@@ -200,11 +209,12 @@ public class DependencyParser {
 
     /**
      * Get a version string from a given document.
-     * @param childGroupId groupId for the target artifact.
+     *
+     * @param childGroupId    groupId for the target artifact.
      * @param childArtifactId artifactId for the target artifact.
-     * @param ns namespace.
-     * @param parentArtifact parent artifact.
-     * @param doc a given document containing the version info.
+     * @param ns              namespace.
+     * @param parentArtifact  parent artifact.
+     * @param doc             a given document containing the version info.
      * @return searched version string.
      */
     private static String getVersionFromDoc(String childGroupId, String childArtifactId, Namespace ns, Artifact parentArtifact, Document doc) {
@@ -221,31 +231,33 @@ public class DependencyParser {
         String version = null;
         //If the POM file does contain "dependencyManagement" or "dependencies"  element
         if (dependencies != null) {
-            String temp =  getDependencyVersion(dependencies, ns, rootNode, childArtifactId, childGroupId, parentArtifact);
-            if(temp != null) version = temp;
+            String temp = getDependencyVersion(dependencies, ns, rootNode, childArtifactId, childGroupId, parentArtifact);
+            if (temp != null) version = temp;
         }
         Element property = rootNode.getChild("properties", ns);
-        if(property != null && version != null && version.contains("${")) {
+        if (property != null && version != null && version.contains("${")) {
             version = searchPropertyVersion(rootNode, version, ns);
         }
         //if current parent does not contain the variable, go to its parent recursively
-        if(version == null || version.contains("${")) return getFromParentVersion(childGroupId, childArtifactId, rootNode, ns, version);
+        if (version == null || version.contains("${"))
+            return getFromParentVersion(childGroupId, childArtifactId, rootNode, ns, version);
         return version;
     }
 
     /**
      * This method updates the versions of a given dependency set by parsing the central POM file.
+     *
      * @param centralArtifact the artifact containing all version info.
-     * @param downloaded the given downloaded set.
+     * @param downloaded      the given downloaded set.
      * @return a updated set containing new versions.
      */
-    public static Set<Artifact> getUpdatedDependencies(Artifact centralArtifact, Set<Artifact> downloaded){
+    public static Set<Artifact> getUpdatedDependencies(Artifact centralArtifact, Set<Artifact> downloaded) {
         Document doc = getDocument(centralArtifact);
         Namespace ns = Namespace.getNamespace(Util.namespace());
         Set<Artifact> updatedSet = new HashSet<>();
-        for(Artifact artifact : downloaded){
+        for (Artifact artifact : downloaded) {
             String updatedVersion = getVersionFromDoc(artifact.getGroupId(), artifact.getArtifactId(), ns, centralArtifact, doc);
-            if(updatedVersion != null) {
+            if (updatedVersion != null) {
                 artifact.setVersion(updatedVersion);
             }
             updatedSet.add(artifact);
@@ -255,6 +267,7 @@ public class DependencyParser {
 
     /**
      * This method will get a Pom Document based of a given artifact according to parent element.
+     *
      * @param parentArtifact target artifact.
      * @return returns a download POM document.
      */
@@ -270,13 +283,14 @@ public class DependencyParser {
 
     /**
      * This method will create an artifact according to parent element.
-     * @param ns namespace.
+     *
+     * @param ns     namespace.
      * @param parent parent element.
      * @return a newly created artifact.
      */
     private static Artifact createArtifact(Namespace ns, Element parent) {
         String parentArtifactId = parent.getChild("artifactId", ns).getValue();
-        String parentGroupId =  parent.getChild("groupId", ns).getValue();
+        String parentGroupId = parent.getChild("groupId", ns).getValue();
         String parentVersion = parent.getChild("version", ns).getValue();
         Artifact parentArtifact = new Artifact(parentGroupId, parentArtifactId, parentVersion);
         return parentArtifact;
@@ -284,32 +298,32 @@ public class DependencyParser {
 
     /**
      * This method will get the version of a given artifact in a parent Pom file.
-     * @param dependencies dependency list of parent.
-     * @param ns namespace.
-     * @param rootNode rootnode of parent Pom file.
+     *
+     * @param dependencies    dependency list of parent.
+     * @param ns              namespace.
+     * @param rootNode        rootnode of parent Pom file.
      * @param childArtifactId target artifactID.
-     * @param childGroupId target groupId.
-     * @param parentArtifact parent artifact.
+     * @param childGroupId    target groupId.
+     * @param parentArtifact  parent artifact.
      * @return returns version if it exists. returns null if it does not exist.
      */
     private static String getDependencyVersion(Element dependencies, Namespace ns, Element rootNode, String childArtifactId, String childGroupId, Artifact parentArtifact) {
         String childVersion = null;
         for (Element target : dependencies.getChildren("dependency", ns)) {
-            if(!childArtifactId.equals(target.getChild("artifactId", ns).getValue())) continue;
+            if (!childArtifactId.equals(target.getChild("artifactId", ns).getValue())) continue;
             Element version = target.getChild("version", ns);
             childVersion = parseDependencyVersion(childGroupId, childArtifactId, version, rootNode, ns, parentArtifact);
-            if(childVersion != null) break;
+            if (childVersion != null) break;
         }
         return childVersion;
     }
 
 
-
-
     /**
      * It returns a Document object fetched by SAXBuilder.
+     *
      * @param REMOTE_URL the URL for the Pom file
-     * @param artifact the target artifact object
+     * @param artifact   the target artifact object
      * @return returns a fetched Pom file. returns null if it does not exists.
      */
     private static Document parseDoc(String REMOTE_URL, Artifact artifact) {
@@ -324,8 +338,9 @@ public class DependencyParser {
 
     /**
      * It returns a Document object fetched by SAXBuilder. The URL is constructed in a reversed order.
+     *
      * @param REMOTE_URL the URL for the Pom file
-     * @param artifact the target artifact object
+     * @param artifact   the target artifact object
      * @return returns a fetched Pom file. returns null if it does not exists.
      */
     private static Document parseDocReversely(String REMOTE_URL, Artifact artifact) {
@@ -339,16 +354,16 @@ public class DependencyParser {
     }
 
     /**
-     * It searches version of a dependency which is specified as a variable
-     *  such as <version>${junit.version}</version>.
-     *  Example can be found: https://repo1.maven.org/maven2/cn/leancloud/okhttp-parent/2.6.0/okhttp-parent-2.6.0.pom.
-     * @param rootNode rootNode of the Pom file
+     * It searches version of a dependency which is specified as a variable such as <version>${junit.version}</version>.
+     * Example can be found: https://repo1.maven.org/maven2/cn/leancloud/okhttp-parent/2.6.0/okhttp-parent-2.6.0.pom.
+     *
+     * @param rootNode     rootNode of the Pom file
      * @param childVersion version value in the Pom file
-     * @param ns name space of the Pom file
+     * @param ns           name space of the Pom file
      * @return returns version string inside Property element of the Pom file. returns null if it does not exists.
      */
     private static String searchPropertyVersion(Element rootNode, String childVersion, Namespace ns) {
-        if(childVersion == null) return null;
+        if (childVersion == null) return null;
         Element temp = rootNode.getChild("properties", ns);
         String version = childVersion.substring(childVersion.indexOf("{") + 1, childVersion.indexOf("}"));
         try {
@@ -359,9 +374,10 @@ public class DependencyParser {
     }
 
     /**
-     * If the dependency version is not specified int the POM file,
-     *  the program will search the coordinate on Maven central library to fetch the first available version.
-     * @param childGroupId target group id of a dependency
+     * If the dependency version is not specified int the POM file, the program will search the coordinate on Maven
+     * central library to fetch the first available version.
+     *
+     * @param childGroupId    target group id of a dependency
      * @param childArtifactId target artifact id of a dependency
      * @return returns first available version on Maven Central Library. returns null if it does not exists.
      */
@@ -387,6 +403,7 @@ public class DependencyParser {
 
     /**
      * Fetch available version by finding the first version in "str name='v'" element
+     *
      * @param responses response of the Http request that is in the format of a Pom file
      * @return returns the available version string. returns null if it does not exists.
      */
@@ -408,6 +425,7 @@ public class DependencyParser {
 
     /**
      * Helper methods for checking if ArtifactId is a variable
+     *
      * @param childArtifactId target artifact id
      * @return a boolean value indicating if the input is valid
      */
@@ -420,6 +438,7 @@ public class DependencyParser {
 
     /**
      * Helper methods for checking if GroupId is a variable
+     *
      * @param childGroupId target group id
      * @return a boolean value indicating if the input is valid
      */
@@ -432,6 +451,7 @@ public class DependencyParser {
 
     /**
      * Helper methods for checking if Version string is a variable
+     *
      * @param version target version
      * @return a boolean value indicating if the input is valid
      */
@@ -443,28 +463,40 @@ public class DependencyParser {
     }
 
     /**
-     * Get an Artifact containing all version info.
-     * @param target target artifact.
-     * @return the artifact containing all version info.
+     * Get an Artifact containing all version info. The mechanism implemented here searches for "-" signs in the
+     * artifact name. Depending on whether one or two dashes are found, the supposed central-artifact name (containing
+     * all version numbers) is constructed and searched for. If no such artifact was found this method returns null and
+     * has no further effect.
+     *
+     * @param target as the artifact to search a central version artifact file for.
+     * @return the artifact containing all version info, if it esists. Null otherwise.
      */
     public static Artifact getCentralArtifact(Artifact target) {
         String groupId = target.getGroupId();
         String artifactId = target.getArtifactId();
         String version = target.getVersion();
+
+        // If the artifact has one dash, append "-dependencies"
         // For cases like "hst-client". The artifact is "hst-client-dependencies".
         String CentralArtifactId = artifactId + "-dependencies";
         Artifact resultArtifact = new Artifact(groupId, CentralArtifactId, version);
-        if (artifactExists(resultArtifact)){
+        if (artifactExists(resultArtifact)) {
             return resultArtifact;
         }
-        // For cases like "spring-boot-starter". The artifact is "spring-boot-dependencies".
+
+        // It the artifact has no dashes, return null
         int indexOfDash = artifactId.indexOf('-');
-        if(indexOfDash == -1) return null;
+        if (indexOfDash == -1)
+            return null;
+
+        // If the artifact has two dashes, replace the 3rd word by "dependencies".
+        // For cases like "spring-boot-starter". The artifact is "spring-boot-dependencies".
         indexOfDash = artifactId.indexOf('-', indexOfDash + 1);
-        if(indexOfDash == -1) return null;
+        if (indexOfDash == -1)
+            return null;
         CentralArtifactId = artifactId.substring(0, indexOfDash) + "-dependencies";
         resultArtifact.setArtifactId(CentralArtifactId);
-        if (artifactExists(resultArtifact)){
+        if (artifactExists(resultArtifact)) {
             return resultArtifact;
         }
         return null;
@@ -472,12 +504,13 @@ public class DependencyParser {
 
     /**
      * This helper method check if a given artifact exists on Maven Central Library
+     *
      * @param resultArtifact a given artifact
      * @return if it exists, return true
      */
     private static boolean artifactExists(Artifact resultArtifact) {
-        if(parseDoc(Util.getPomURL(), resultArtifact) != null) return true;
-        if(parseDocReversely(Util.getPomURL(), resultArtifact) != null) return true;
+        if (parseDoc(Util.getPomURL(), resultArtifact) != null) return true;
+        if (parseDocReversely(Util.getPomURL(), resultArtifact) != null) return true;
         return false;
     }
 
